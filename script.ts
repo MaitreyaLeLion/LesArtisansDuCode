@@ -42,10 +42,15 @@ function init() {
   }
 
   // Event Listeners
-  loginBtn.addEventListener("click", handleLogin);
-  passwordInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") handleLogin();
-  });
+  if (loginBtn) {
+      loginBtn.addEventListener("click", handleLogin);
+  }
+  
+  if (passwordInput) {
+      passwordInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") handleLogin();
+      });
+  }
 
   // Dock animations
   dockItems.forEach((item) => {
@@ -70,11 +75,12 @@ function updateClock() {
 }
 
 function handleLogin() {
+  if (!passwordInput) return;
   const password = passwordInput.value;
   if (password.length > 0) {
     // Simulate login
     state.isLoggedIn = true;
-    overlay.classList.remove("active");
+    if (overlay) overlay.classList.remove("active");
     // Clear input
     passwordInput.value = "";
 
@@ -141,16 +147,18 @@ if (closeShutdownBtn) {
 
   if (confirmShutdownBtn) {
     confirmShutdownBtn.addEventListener("click", () => {
+      console.log("Shutdown button clicked");
       // Simulate shutdown
       const startupOverlay = document.getElementById("startup-overlay") as HTMLDivElement;
+      console.log("Startup overlay found:", startupOverlay);
 
       // Hide shutdown popup
       shutdownOverlay.classList.remove("active");
 
       // Reset state
       state.isLoggedIn = false;
-      passwordInput.value = "";
-      overlay.classList.remove("active");
+      if (passwordInput) passwordInput.value = "";
+      if (overlay) overlay.classList.remove("active");
 
       // Show startup overlay
       if (startupOverlay) {
@@ -158,8 +166,11 @@ if (closeShutdownBtn) {
         // Force reflow
         startupOverlay.offsetHeight;
         startupOverlay.classList.remove("hidden");
+        console.log("Startup overlay shown");
       }
     });
+  } else {
+      console.error("Confirm shutdown button not found");
   }
 
 // Carousel Logic
@@ -256,9 +267,11 @@ if (recyclingOverlay) {
 // Settings App Logic
 const settingsDockItem = document.getElementById("settings-dock-item") as HTMLDivElement;
 const settingsOverlay = document.getElementById("settings-overlay") as HTMLDivElement;
-const closeSettingsBtn = document.getElementById("close-settings-btn") as HTMLButtonElement;
+const closeSettingsBtns = document.querySelectorAll(".close-settings-btn");
 const wallpaperItems = document.querySelectorAll(".wallpaper-item");
 const resetWallpaperBtn = document.getElementById("reset-wallpaper-btn") as HTMLButtonElement;
+const settingsSidebarItems = document.querySelectorAll(".settings-sidebar .sidebar-item");
+const settingsSections = document.querySelectorAll(".settings-section");
 
 // Wallpaper Data (using Unsplash URLs as fallback)
 const wallpapers: { [key: string]: string } = {
@@ -277,11 +290,11 @@ if (settingsDockItem) {
 }
 
 // Close Settings
-if (closeSettingsBtn) {
-    closeSettingsBtn.addEventListener("click", () => {
+closeSettingsBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
         settingsOverlay.classList.remove("active");
     });
-}
+});
 
 // Close on click outside
 if (settingsOverlay) {
@@ -291,6 +304,34 @@ if (settingsOverlay) {
         }
     });
 }
+
+// Settings Tab Switching
+settingsSidebarItems.forEach(item => {
+    item.addEventListener("click", () => {
+        // Remove active class from all sidebar items
+        settingsSidebarItems.forEach(i => i.classList.remove("active"));
+        // Add active class to clicked item
+        item.classList.add("active");
+
+        const tabName = item.getAttribute("data-tab");
+        
+        // Hide all sections
+        settingsSections.forEach(section => {
+            (section as HTMLElement).style.display = "none";
+            section.classList.remove("active");
+        });
+
+        // Show selected section
+        const selectedSection = document.getElementById(`settings-section-${tabName}`);
+        if (selectedSection) {
+            selectedSection.style.display = "block";
+            // Small timeout to allow display:block to apply before adding active class for potential animation
+            setTimeout(() => {
+                selectedSection.classList.add("active");
+            }, 10);
+        }
+    });
+});
 
 // Change Wallpaper
 wallpaperItems.forEach(item => {
@@ -326,5 +367,30 @@ if (resetWallpaperBtn) {
         wallpaperItems.forEach(i => i.classList.remove("active"));
         const defaultItem = document.querySelector('.wallpaper-item[data-wallpaper="default"]');
         if (defaultItem) defaultItem.classList.add("active");
+    });
+}
+
+// Premium Feature Logic
+const premiumBtn = document.getElementById("premium-btn") as HTMLButtonElement;
+const premiumOverlay = document.getElementById("premium-overlay") as HTMLDivElement;
+const closePremiumBtn = document.getElementById("close-premium-btn") as HTMLButtonElement;
+
+if (premiumBtn) {
+    premiumBtn.addEventListener("click", () => {
+        premiumOverlay.classList.add("active");
+    });
+}
+
+if (closePremiumBtn) {
+    closePremiumBtn.addEventListener("click", () => {
+        premiumOverlay.classList.remove("active");
+    });
+}
+
+if (premiumOverlay) {
+    premiumOverlay.addEventListener("click", (e) => {
+        if (e.target === premiumOverlay) {
+            premiumOverlay.classList.remove("active");
+        }
     });
 }
