@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script type="module" defer>
+        import {WINUXWindow} from "./front/src/winux/components/window.js";
+        let wWindow = new WINUXWindow("test-div", "https://www.nuitdelinfo.com/");
+    </script>
 </head>
 <body>
+    <div id="test-div"></div>
 
 </body>
 </html>
