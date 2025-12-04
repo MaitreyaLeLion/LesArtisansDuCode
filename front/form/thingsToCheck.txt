@@ -1,0 +1,10 @@
+1.Longueur>32 [Afficher: le mdp doit être supérieur ou égal à 2^5]
+2.Chaque lettre qui a un index pair doit être en majuscule [index de la premiere lettre:0]
+3.La somme de tous les chiffres doit être égale à 8
+4.Au moins 3 charactères d'alphabet cirilique
+5.Au moins 3 émojis
+6.Le mot de passe doit inclure le prénom du dernier président de la 4e république française
+7.Le mot de passe doit contenir le mois des premiers pas de l'homme sur la lune, écrit en binaire sur 4 bits [20 juillet 1969, juillet->07->0111]
+8.Le mot de passe doit contenir votre adresse IP au format X.X.X.X, ou les X sont >=0 et <=255
+9.Captcha
+10.Code snake
