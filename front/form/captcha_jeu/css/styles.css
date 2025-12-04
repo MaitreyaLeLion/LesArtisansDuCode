@@ -1,0 +1,63 @@
+
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.captcha-container {
+  margin: 0px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  transition: all 0.1s ease-in-out;
+}
+.captcha-container > h2{
+  color: #007bff;
+}
+.captcha-container > p{
+  color: #747474;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.captcha-expanded {
+  width: 600px;
+  height: 600px;
+}
+
+#gameGrid {
+  display: grid;
+  grid-template-columns: repeat(12, 40px);
+  grid-gap: 0px;
+  margin-top: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-cell {
+  width: 40px;
+  height: 40px;
+  background-color: #ffffff;
+  border: 1px solid #adadad;
+}
+
+#site{
+  display: none;
+}

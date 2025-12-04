@@ -14,7 +14,6 @@ export class password_check {
 
 	public async isPasswordAlright(): Promise<{ success: boolean; message: string }> {
 		const checks = [
-			this.containsIPAddress(),
 			this.isLengthOk(),
 			this.isEvenIndexUppercase(),
 			this.isDigitSumOk(),
@@ -22,6 +21,7 @@ export class password_check {
 			this.hasEmojis(),
 			this.containsLastPresidentName(),
 			this.containsMoonLandingMonthBinary(),
+			// this.containsIPAddress(),
 		];
 
 		for (const check of checks) {
@@ -79,7 +79,7 @@ export class password_check {
 
 	// 7. Inclut 0111 (mois de juillet en binaire)
 	private containsMoonLandingMonthBinary() {
-		return this.result(this.password.includes("0111"), "Le mot de passe doit contenir le mois de l’alunissage en binaire.");
+		return this.result(this.password.includes("0111"), "Le mot de passe doit contenir le mois du premier alunissage en binaire.");
 	}
 
 	// 8. Contient une IP valide
