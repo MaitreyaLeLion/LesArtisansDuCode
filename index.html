@@ -51,6 +51,9 @@
             <div class="dock-item" title="Musique">
                 <i class="fa-solid fa-music"></i>
             </div>
+            <div class="dock-item" title="Jeux" id="games-dock-item">
+                <i class="fa-solid fa-gamepad"></i>
+            </div>
             <div class="dock-item" title="Paramètres" id="settings-dock-item">
                 <i class="fa-solid fa-gear"></i>
             </div>
@@ -312,6 +315,45 @@
                     <ul class="playlist" id="playlist-list">
                         <!-- Playlist items will be added here dynamically -->
                     </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Games Overlay -->
+    <div class="overlay" id="games-overlay">
+        <div class="standard-popup games-popup">
+            <div class="popup-header">
+                <i class="fa-solid fa-gamepad"></i>
+                <h3>Jeux</h3>
+                <button class="close-btn" id="close-games-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="popup-body">
+                <div class="games-list">
+                    <div class="game-item">
+                        <div class="game-icon">
+                            <i class="fa-solid fa-gun"></i>
+                        </div>
+                        <div class="game-info">
+                            <h4>Laser Game</h4>
+                            <p>Jeu de tir laser</p>
+                        </div>
+                        <button class="play-btn">Jouer</button>
+                    </div>
+                    <div class="game-item">
+                        <div class="game-icon">
+                            <i class="fa-solid fa-staff-snake"></i>
+                        </div>
+                        <div class="game-info">
+                            <h4>Snake</h4>
+                            <p>Le classique Snake</p>
+                        </div>
+                        <button class="play-btn">Jouer</button>
+                    </div>
+                </div>
+                <div class="coming-soon-message">
+                    <i class="fa-solid fa-clock"></i>
+                    <p>D'autres jeux sortiront bientôt !</p>
                 </div>
             </div>
         </div>

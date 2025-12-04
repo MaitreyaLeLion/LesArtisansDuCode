@@ -1,383 +1,443 @@
-// script.js
+/**
+ * ==========================================================================================
+ *                                     WINUX OS - MAIN SCRIPT
+ * ==========================================================================================
+ * This file contains the core logic for the WINUX web desktop environment.
+ * It handles the desktop interface, window management, applications, and system modules.
+ *
+ * STRUCTURE:
+ * 1. Interfaces & Types
+ * 2. Global State
+ * 3. Utilities (Draggable)
+ * 4. Core System Functions (Clock, Login, Dock)
+ * 5. System Modules (Shutdown, Recycling, Settings, Premium)
+ * 6. Applications (Music Player)
+ * 7. Main Initialization
+ * ==========================================================================================
+ */
 
-// State
+// ==========================================================================================
+// 2. GLOBAL STATE
+// ==========================================================================================
+
 const state = {
-  isLoggedIn: false,
-  batteryLevel: 85,
+    isLoggedIn: false,
+    batteryLevel: 85,
 };
 
-// DOM Elements
-const overlay = document.getElementById("login-overlay");
-const loginBtn = document.getElementById("login-btn");
-const passwordInput = document.getElementById("password-input");
-const clockElement = document.getElementById("clock");
-const batteryElement = document.getElementById("battery-level");
-const dockItems = document.querySelectorAll(".dock-item");
+// ==========================================================================================
+// 3. UTILITIES
+// ==========================================================================================
 
-// Initialize
-function init() {
-  updateClock();
-  setInterval(updateClock, 1000);
+/**
+ * Class to make elements draggable.
+ * Used for moving application windows around the desktop.
+ */
+class Draggable {
+    constructor(element, handle) {
+        this.element = element;
+        this.handle = handle;
+        this.isDragging = false;
+        this.startX = 0;
+        this.startY = 0;
+        this.currentTranslateX = 0;
+        this.currentTranslateY = 0;
+        
+        this.handle.style.cursor = "grab";
+        this.init();
+    }
 
-  // Startup logic
-  const startupOverlay = document.getElementById("startup-overlay");
-  const startBtn = document.getElementById("start-btn");
+    init() {
+        this.handle.addEventListener("mousedown", (e) => this.onMouseDown(e));
+        document.addEventListener("mousemove", (e) => this.onMouseMove(e));
+        document.addEventListener("mouseup", () => this.onMouseUp());
+    }
 
-  if (startBtn && startupOverlay) {
-    startBtn.addEventListener("click", () => {
-      startupOverlay.classList.add("hidden");
-      setTimeout(() => {
-        startupOverlay.style.display = "none";
-      }, 1000);
-    });
-  }
+    onMouseDown(e) {
+        this.isDragging = true;
+        this.startX = e.clientX;
+        this.startY = e.clientY;
+        this.handle.style.cursor = "grabbing";
 
-  // Event Listeners
-  if (loginBtn) {
-      loginBtn.addEventListener("click", handleLogin);
-  }
-  
-  if (passwordInput) {
-      passwordInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") handleLogin();
-      });
-  }
+        // Get current transform values if any
+        const style = window.getComputedStyle(this.element);
+        const matrix = new WebKitCSSMatrix(style.transform);
+        this.currentTranslateX = matrix.m41;
+        this.currentTranslateY = matrix.m42;
+    }
 
-  // Dock animations
-  dockItems.forEach((item) => {
-    item.addEventListener("click", () => {
-      animateIcon(item);
-    });
-  });
+    onMouseMove(e) {
+        if (!this.isDragging) return;
+
+        const dx = e.clientX - this.startX;
+        const dy = e.clientY - this.startY;
+
+        const newX = this.currentTranslateX + dx;
+        const newY = this.currentTranslateY + dy;
+
+        this.element.style.transform = `translate(${newX}px, ${newY}px)`;
+    }
+
+    onMouseUp() {
+        if (!this.isDragging) return;
+        this.isDragging = false;
+        this.handle.style.cursor = "grab";
+
+        // Update current translation for next drag
+        const style = window.getComputedStyle(this.element);
+        const matrix = new WebKitCSSMatrix(style.transform);
+        this.currentTranslateX = matrix.m41;
+        this.currentTranslateY = matrix.m42;
+    }
 }
 
+// ==========================================================================================
+// 4. CORE SYSTEM FUNCTIONS
+// ==========================================================================================
+
+/**
+ * Updates the system clock in the top bar.
+ */
 function updateClock() {
+    const clockElement = document.getElementById("clock");
+    if (!clockElement) return;
+
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
-    
+
     // Format date: "Lun 4 Dec"
     const options = { weekday: 'short', day: 'numeric', month: 'short' };
     const dateString = now.toLocaleDateString('fr-FR', options);
 
-    if (clockElement) {
-        clockElement.textContent = `${dateString} ${hours}:${minutes}`;
-    }
+    clockElement.textContent = `${dateString} ${hours}:${minutes}`;
 }
 
-function handleLogin() {
-  if (!passwordInput) return;
-  const password = passwordInput.value;
-  if (password.length > 0) {
-    // Simulate login
-    state.isLoggedIn = true;
-    if (overlay) overlay.classList.remove("active");
-    // Clear input
-    passwordInput.value = "";
+/**
+ * Initializes the login screen logic.
+ */
+function initLogin() {
+    const overlay = document.getElementById("login-overlay");
+    const loginBtn = document.getElementById("login-btn");
+    const passwordInput = document.getElementById("password-input");
 
-    // Play a sound or show a notification could go here
-    console.log("Logged in as admin");
-  } else {
-    // Shake animation for error
-    const popup = document.querySelector("#login-overlay .standard-popup");
-    if (popup) {
-        popup.style.animation = "none";
-        popup.offsetHeight; /* trigger reflow */
-        popup.style.animation = "shake 0.5s";
-    }
-  }
-}
-
-function animateIcon(element) {
-  element.style.transform = "scale(0.8)";
-  setTimeout(() => {
-    element.style.transform = "";
-  }, 150);
-}
-
-// Add shake animation style dynamically
-const styleSheet = document.createElement("style");
-styleSheet.innerText = `
-@keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    50% { transform: translateX(5px); }
-    75% { transform: translateX(-5px); }
-    100% { transform: translateX(0); }
-}
-`;
-document.head.appendChild(styleSheet);
-
-// Start
-document.addEventListener("DOMContentLoaded", init);
-
-// Shutdown Logic
-const shutdownModule = document.getElementById("shutdown-module");
-const shutdownOverlay = document.getElementById("shutdown-overlay");
-const cancelShutdownBtn = document.getElementById("cancel-shutdown-btn");
-const confirmShutdownBtn = document.getElementById("confirm-shutdown-btn");
-const closeShutdownBtn = document.getElementById("close-shutdown-btn");
-
-if (shutdownModule) {
-    shutdownModule.addEventListener("click", () => {
-        shutdownOverlay.classList.add("active");
-    });
-}
-
-if (cancelShutdownBtn) {
-    cancelShutdownBtn.addEventListener("click", () => {
-        shutdownOverlay.classList.remove("active");
-    });
-}
-
-if (closeShutdownBtn) {
-    closeShutdownBtn.addEventListener("click", () => {
-        shutdownOverlay.classList.remove("active");
-    });
-}
-
-  if (confirmShutdownBtn) {
-    confirmShutdownBtn.addEventListener("click", () => {
-      console.log("Shutdown button clicked");
-      // Simulate shutdown
-      const startupOverlay = document.getElementById("startup-overlay");
-      console.log("Startup overlay found:", startupOverlay);
-
-      // Hide shutdown popup
-      shutdownOverlay.classList.remove("active");
-
-      // Reset state
-      state.isLoggedIn = false;
-      if (passwordInput) passwordInput.value = "";
-      if (overlay) overlay.classList.remove("active");
-
-      // Show startup overlay
-      if (startupOverlay) {
-        startupOverlay.style.display = ""; // Clear display: none
-        // Force reflow
-        startupOverlay.offsetHeight;
-        startupOverlay.classList.remove("hidden");
-        console.log("Startup overlay shown");
-      }
-    });
-  } else {
-      console.error("Confirm shutdown button not found");
-  }
-
-// Carousel Logic
-const recyclingModule = document.getElementById("recyclage-module");
-const recyclingOverlay = document.getElementById("recycling-overlay");
-const closeRecyclingBtn = document.getElementById("close-recycling-btn");
-
-// Carousel Elements
-const slides = document.querySelectorAll(".carousel-slide");
-const dots = document.querySelectorAll(".dot");
-const nextBtn = document.getElementById("next-btn");
-const skipBtn = document.getElementById("skip-btn");
-let currentSlide = 0;
-
-function showSlide(index) {
-    slides.forEach((slide, i) => {
-        if (i === index) {
-            slide.classList.add("active");
-        } else {
-            slide.classList.remove("active");
+    // Shake animation style
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = `
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
         }
-    });
+    `;
+    document.head.appendChild(styleSheet);
 
-    dots.forEach((dot, i) => {
-        if (i === index) {
-            dot.classList.add("active");
+    const handleLogin = () => {
+        if (!passwordInput) return;
+        const password = passwordInput.value;
+        if (password.length > 0) {
+            // Simulate login
+            state.isLoggedIn = true;
+            if (overlay) overlay.classList.remove("active");
+            passwordInput.value = "";
+            console.log("Logged in as admin");
         } else {
-            dot.classList.remove("active");
+            // Shake animation for error
+            const popup = document.querySelector("#login-overlay .standard-popup");
+            if (popup) {
+                popup.style.animation = "none";
+                popup.offsetHeight; /* trigger reflow */
+                popup.style.animation = "shake 0.5s";
+            }
         }
-    });
+    };
 
-    if (index === slides.length - 1) {
-        nextBtn.textContent = "Get Started";
-    } else {
-        nextBtn.textContent = "Next";
+    if (loginBtn) loginBtn.addEventListener("click", handleLogin);
+    if (passwordInput) {
+        passwordInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") handleLogin();
+        });
     }
 }
 
-function nextSlide() {
-    if (currentSlide < slides.length - 1) {
-        currentSlide++;
-        showSlide(currentSlide);
-    } else {
-        // Close popup on last slide
-        recyclingOverlay.classList.remove("active");
-        // Reset to first slide for next time
+/**
+ * Initializes the dock icons and their animations.
+ */
+function initDock() {
+    const dockItems = document.querySelectorAll(".dock-item");
+
+    const animateIcon = (element) => {
+        element.style.transform = "scale(0.8)";
         setTimeout(() => {
-            currentSlide = 0;
-            showSlide(0);
-        }, 500);
+            element.style.transform = "";
+        }, 150);
+    };
+
+    dockItems.forEach((item) => {
+        item.addEventListener("click", () => {
+            animateIcon(item);
+        });
+    });
+}
+
+/**
+ * Initializes the startup screen logic.
+ */
+function initStartup() {
+    const startupOverlay = document.getElementById("startup-overlay");
+    const startBtn = document.getElementById("start-btn");
+
+    if (startBtn && startupOverlay) {
+        startBtn.addEventListener("click", () => {
+            startupOverlay.classList.add("hidden");
+            setTimeout(() => {
+                startupOverlay.style.display = "none";
+            }, 1000);
+        });
     }
 }
 
-if (recyclingModule) {
-    recyclingModule.addEventListener("click", () => {
-        recyclingOverlay.classList.add("active");
-        currentSlide = 0;
-        showSlide(0);
-    });
+// ==========================================================================================
+// 5. SYSTEM MODULES
+// ==========================================================================================
+
+/**
+ * Initializes the Shutdown module.
+ */
+function initShutdown() {
+    const shutdownModule = document.getElementById("shutdown-module");
+    const shutdownOverlay = document.getElementById("shutdown-overlay");
+    const cancelShutdownBtn = document.getElementById("cancel-shutdown-btn");
+    const confirmShutdownBtn = document.getElementById("confirm-shutdown-btn");
+    const closeShutdownBtn = document.getElementById("close-shutdown-btn");
+    const startupOverlay = document.getElementById("startup-overlay");
+    const loginOverlay = document.getElementById("login-overlay");
+    const passwordInput = document.getElementById("password-input");
+
+    if (shutdownModule) {
+        shutdownModule.addEventListener("click", () => shutdownOverlay.classList.add("active"));
+    }
+
+    const closeShutdown = () => shutdownOverlay.classList.remove("active");
+
+    if (cancelShutdownBtn) cancelShutdownBtn.addEventListener("click", closeShutdown);
+    if (closeShutdownBtn) closeShutdownBtn.addEventListener("click", closeShutdown);
+
+    if (confirmShutdownBtn) {
+        confirmShutdownBtn.addEventListener("click", () => {
+            console.log("Shutdown initiated");
+            shutdownOverlay.classList.remove("active");
+
+            // Reset state
+            state.isLoggedIn = false;
+            if (passwordInput) passwordInput.value = "";
+            if (loginOverlay) loginOverlay.classList.remove("active");
+
+            // Show startup overlay
+            if (startupOverlay) {
+                startupOverlay.style.display = ""; // Clear display: none
+                startupOverlay.offsetHeight; // Force reflow
+                startupOverlay.classList.remove("hidden");
+            }
+        });
+    }
 }
 
-if (closeRecyclingBtn) {
-    closeRecyclingBtn.addEventListener("click", () => {
-        recyclingOverlay.classList.remove("active");
-    });
-}
+/**
+ * Initializes the Recycling Info module (Carousel).
+ */
+function initRecycling() {
+    const recyclingModule = document.getElementById("recyclage-module");
+    const recyclingOverlay = document.getElementById("recycling-overlay");
+    const closeRecyclingBtn = document.getElementById("close-recycling-btn");
+    const slides = document.querySelectorAll(".carousel-slide");
+    const dots = document.querySelectorAll(".dot");
+    const nextBtn = document.getElementById("next-btn");
+    const skipBtn = document.getElementById("skip-btn");
+    let currentSlide = 0;
 
-if (nextBtn) {
-    nextBtn.addEventListener("click", nextSlide);
-}
-
-if (skipBtn) {
-    skipBtn.addEventListener("click", () => {
-        recyclingOverlay.classList.remove("active");
-    });
-}
-
-dots.forEach((dot, index) => {
-    dot.addEventListener("click", () => {
-        currentSlide = index;
-        showSlide(currentSlide);
-    });
-});
-
-// Close recycling popup when clicking outside
-if (recyclingOverlay) {
-    recyclingOverlay.addEventListener("click", (e) => {
-        if (e.target === recyclingOverlay) {
-            recyclingOverlay.classList.remove("active");
-        }
-    });
-}
-
-// Settings App Logic
-const settingsDockItem = document.getElementById("settings-dock-item");
-const settingsOverlay = document.getElementById("settings-overlay");
-const closeSettingsBtns = document.querySelectorAll(".close-settings-btn");
-const wallpaperItems = document.querySelectorAll(".wallpaper-item");
-const resetWallpaperBtn = document.getElementById("reset-wallpaper-btn");
-const settingsSidebarItems = document.querySelectorAll(".settings-sidebar .sidebar-item");
-const settingsSections = document.querySelectorAll(".settings-section");
-
-// Wallpaper Data
-const wallpapers = {
-    default: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
-    france: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop",
-    it: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop",
-    universe: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop",
-    nature: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2074&auto=format&fit=crop"
-};
-
-// Open Settings
-if (settingsDockItem) {
-    settingsDockItem.addEventListener("click", () => {
-        settingsOverlay.classList.add("active");
-    });
-}
-
-// Close Settings
-closeSettingsBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-        settingsOverlay.classList.remove("active");
-    });
-});
-
-// Close on click outside
-if (settingsOverlay) {
-    settingsOverlay.addEventListener("click", (e) => {
-        if (e.target === settingsOverlay) {
-            settingsOverlay.classList.remove("active");
-        }
-    });
-}
-
-// Settings Tab Switching
-settingsSidebarItems.forEach(item => {
-    item.addEventListener("click", () => {
-        // Remove active class from all sidebar items
-        settingsSidebarItems.forEach(i => i.classList.remove("active"));
-        // Add active class to clicked item
-        item.classList.add("active");
-
-        const tabName = item.getAttribute("data-tab");
-        
-        // Hide all sections
-        settingsSections.forEach(section => {
-            section.style.display = "none";
-            section.classList.remove("active");
+    const showSlide = (index) => {
+        slides.forEach((slide, i) => {
+            if (i === index) slide.classList.add("active");
+            else slide.classList.remove("active");
         });
 
-        // Show selected section
-        const selectedSection = document.getElementById(`settings-section-${tabName}`);
-        if (selectedSection) {
-            selectedSection.style.display = "block";
-            // Small timeout to allow display:block to apply before adding active class for potential animation
+        dots.forEach((dot, i) => {
+            if (i === index) dot.classList.add("active");
+            else dot.classList.remove("active");
+        });
+
+        if (nextBtn) {
+            nextBtn.textContent = index === slides.length - 1 ? "Get Started" : "Next";
+        }
+    };
+
+    const nextSlide = () => {
+        if (currentSlide < slides.length - 1) {
+            currentSlide++;
+            showSlide(currentSlide);
+        } else {
+            recyclingOverlay.classList.remove("active");
             setTimeout(() => {
-                selectedSection.classList.add("active");
-            }, 10);
+                currentSlide = 0;
+                showSlide(0);
+            }, 500);
         }
+    };
+
+    if (recyclingModule) {
+        recyclingModule.addEventListener("click", () => {
+            recyclingOverlay.classList.add("active");
+            currentSlide = 0;
+            showSlide(0);
+        });
+    }
+
+    if (closeRecyclingBtn) closeRecyclingBtn.addEventListener("click", () => recyclingOverlay.classList.remove("active"));
+    if (nextBtn) nextBtn.addEventListener("click", nextSlide);
+    if (skipBtn) skipBtn.addEventListener("click", () => recyclingOverlay.classList.remove("active"));
+
+    dots.forEach((dot, index) => {
+        dot.addEventListener("click", () => {
+            currentSlide = index;
+            showSlide(currentSlide);
+        });
     });
-});
 
-// Change Wallpaper
-wallpaperItems.forEach(item => {
-    item.addEventListener("click", () => {
-        // Remove active class from all
-        wallpaperItems.forEach(i => i.classList.remove("active"));
-        // Add active class to clicked
-        item.classList.add("active");
+    if (recyclingOverlay) {
+        recyclingOverlay.addEventListener("click", (e) => {
+            if (e.target === recyclingOverlay) recyclingOverlay.classList.remove("active");
+        });
+    }
+}
 
-        const wallpaperKey = item.getAttribute("data-wallpaper");
-        if (wallpaperKey && wallpapers[wallpaperKey]) {
-            let url = wallpapers[wallpaperKey];
-            document.body.style.backgroundImage = `url('${url}')`;
-        }
+/**
+ * Initializes the Settings module (Wallpaper changer).
+ */
+function initSettings() {
+    const settingsDockItem = document.getElementById("settings-dock-item");
+    const settingsOverlay = document.getElementById("settings-overlay");
+    const closeSettingsBtns = document.querySelectorAll(".close-settings-btn");
+    const wallpaperItems = document.querySelectorAll(".wallpaper-item");
+    const resetWallpaperBtn = document.getElementById("reset-wallpaper-btn");
+    const settingsSidebarItems = document.querySelectorAll(".settings-sidebar .sidebar-item");
+    const settingsSections = document.querySelectorAll(".settings-section");
+
+    const wallpapers = {
+        default: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
+        france: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop",
+        it: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop",
+        universe: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop",
+        nature: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2074&auto=format&fit=crop"
+    };
+
+    if (settingsDockItem) settingsDockItem.addEventListener("click", () => settingsOverlay.classList.add("active"));
+
+    closeSettingsBtns.forEach(btn => {
+        btn.addEventListener("click", () => settingsOverlay.classList.remove("active"));
     });
-});
 
-// Reset Wallpaper
-if (resetWallpaperBtn) {
-    resetWallpaperBtn.addEventListener("click", () => {
-        document.body.style.backgroundImage = `url('${wallpapers.default}')`;
-        
-        // Update active state in grid
-        wallpaperItems.forEach(i => i.classList.remove("active"));
-        const defaultItem = document.querySelector('.wallpaper-item[data-wallpaper="default"]');
-        if (defaultItem) defaultItem.classList.add("active");
+    if (settingsOverlay) {
+        settingsOverlay.addEventListener("click", (e) => {
+            if (e.target === settingsOverlay) settingsOverlay.classList.remove("active");
+        });
+    }
+
+    // Tab Switching
+    settingsSidebarItems.forEach(item => {
+        item.addEventListener("click", () => {
+            settingsSidebarItems.forEach(i => i.classList.remove("active"));
+            item.classList.add("active");
+
+            const tabName = item.getAttribute("data-tab");
+            settingsSections.forEach(section => {
+                section.style.display = "none";
+                section.classList.remove("active");
+            });
+
+            const selectedSection = document.getElementById(`settings-section-${tabName}`);
+            if (selectedSection) {
+                selectedSection.style.display = "block";
+                setTimeout(() => selectedSection.classList.add("active"), 10);
+            }
+        });
+    });
+
+    // Wallpaper Logic
+    wallpaperItems.forEach(item => {
+        item.addEventListener("click", () => {
+            wallpaperItems.forEach(i => i.classList.remove("active"));
+            item.classList.add("active");
+
+            const wallpaperKey = item.getAttribute("data-wallpaper");
+            if (wallpaperKey && wallpapers[wallpaperKey]) {
+                document.body.style.backgroundImage = `url('${wallpapers[wallpaperKey]}')`;
+            }
+        });
+    });
+
+    if (resetWallpaperBtn) {
+        resetWallpaperBtn.addEventListener("click", () => {
+            document.body.style.backgroundImage = `url('${wallpapers.default}')`;
+            wallpaperItems.forEach(i => i.classList.remove("active"));
+            const defaultItem = document.querySelector('.wallpaper-item[data-wallpaper="default"]');
+            if (defaultItem) defaultItem.classList.add("active");
+        });
+    }
+}
+
+/**
+ * Initializes the Premium feature popup.
+ */
+function initPremium() {
+    const premiumBtn = document.getElementById("premium-btn");
+    const premiumOverlay = document.getElementById("premium-overlay");
+    const closePremiumBtn = document.getElementById("close-premium-btn");
+
+    if (premiumBtn) premiumBtn.addEventListener("click", () => premiumOverlay.classList.add("active"));
+    if (closePremiumBtn) closePremiumBtn.addEventListener("click", () => premiumOverlay.classList.remove("active"));
+    if (premiumOverlay) {
+        premiumOverlay.addEventListener("click", (e) => {
+            if (e.target === premiumOverlay) premiumOverlay.classList.remove("active");
+        });
+    }
+}
+
+/**
+ * Initializes the Games module.
+ */
+function initGames() {
+    const gamesDockItem = document.getElementById("games-dock-item");
+    const gamesOverlay = document.getElementById("games-overlay");
+    const closeGamesBtn = document.getElementById("close-games-btn");
+    const playBtns = document.querySelectorAll(".game-item .play-btn");
+
+    if (gamesDockItem) gamesDockItem.addEventListener("click", () => gamesOverlay.classList.add("active"));
+    if (closeGamesBtn) closeGamesBtn.addEventListener("click", () => gamesOverlay.classList.remove("active"));
+    
+    if (gamesOverlay) {
+        gamesOverlay.addEventListener("click", (e) => {
+            if (e.target === gamesOverlay) gamesOverlay.classList.remove("active");
+        });
+    }
+
+    playBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            alert("Ce jeu sera bientôt disponible !");
+        });
     });
 }
 
-// Premium Feature Logic
-const premiumBtn = document.getElementById("premium-btn");
-const premiumOverlay = document.getElementById("premium-overlay");
-const closePremiumBtn = document.getElementById("close-premium-btn");
+// ==========================================================================================
+// 6. APPLICATIONS
+// ==========================================================================================
 
-if (premiumBtn) {
-    premiumBtn.addEventListener("click", () => {
-        premiumOverlay.classList.add("active");
-    });
-}
-
-if (closePremiumBtn) {
-    closePremiumBtn.addEventListener("click", () => {
-        premiumOverlay.classList.remove("active");
-    });
-}
-
-if (premiumOverlay) {
-    premiumOverlay.addEventListener("click", (e) => {
-        if (e.target === premiumOverlay) {
-            premiumOverlay.classList.remove("active");
-        }
-    });
-}
-
-// Music Player Logic
+/**
+ * Music Player Application
+ * Handles audio playback, playlist management, and IndexedDB persistence.
+ */
 class MusicPlayer {
     constructor() {
         this.playlist = [];
@@ -399,12 +459,26 @@ class MusicPlayer {
         this.trackArtistEl = document.getElementById("track-artist");
         this.playlistEl = document.getElementById("playlist-list");
         this.addMusicInput = document.getElementById("add-music-input");
-        this.albumArtEl = document.querySelector(".album-art");
 
         this.initDB();
         this.initEventListeners();
+        this.initDraggable();
     }
 
+    /**
+     * Initializes the Draggable functionality for the music player window.
+     */
+    initDraggable() {
+        const popup = document.querySelector(".music-player-popup");
+        const header = document.querySelector(".player-header");
+        if (popup && header) {
+            new Draggable(popup, header);
+        }
+    }
+
+    /**
+     * Initializes IndexedDB for storing music tracks.
+     */
     initDB() {
         const request = indexedDB.open("MusicPlayerDB", 1);
 
@@ -425,6 +499,9 @@ class MusicPlayer {
         };
     }
 
+    /**
+     * Saves a track to IndexedDB.
+     */
     saveTrackToDB(track) {
         if (!this.db || !track.file) return;
 
@@ -441,6 +518,9 @@ class MusicPlayer {
         store.add(trackData);
     }
 
+    /**
+     * Loads tracks from IndexedDB into the playlist.
+     */
     loadTracksFromDB() {
         if (!this.db) return;
 
@@ -462,6 +542,7 @@ class MusicPlayer {
                 });
                 this.updatePlaylistUI();
                 
+                // Load first track if available
                 if (this.playlist.length > 0 && !this.audio.src) {
                     this.currentTrackIndex = 0;
                     const track = this.playlist[0];
@@ -570,7 +651,6 @@ class MusicPlayer {
 
         this.updatePlaylistUI();
         
-        // Auto play
         this.audio.play().then(() => {
             this.isPlaying = true;
             if (this.playPauseBtn) this.playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
@@ -672,7 +752,27 @@ class MusicPlayer {
     }
 }
 
-// Initialize Music Player
-document.addEventListener("DOMContentLoaded", () => {
+// ==========================================================================================
+// 7. MAIN INITIALIZATION
+// ==========================================================================================
+
+function init() {
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    initStartup();
+    initLogin();
+    initDock();
+    initShutdown();
+    initRecycling();
+    initSettings();
+    initSettings();
+    initPremium();
+    initGames();
+
+    // Initialize Applications
     new MusicPlayer();
-});
+}
+
+// Start the application when DOM is ready
+document.addEventListener("DOMContentLoaded", init);
