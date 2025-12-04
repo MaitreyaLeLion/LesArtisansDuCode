@@ -22,7 +22,7 @@ body {
 h2 {
     text-align: center;
     color: #00f5d4;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     text-shadow: 0 0 8px #00f5d4;
 }
 
@@ -43,6 +43,7 @@ input {
     color: #e0e0e0;
     outline: none;
     transition: 0.2s;
+    box-sizing: border-box;
 }
 
 input:focus {
