@@ -1,10 +1,181 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINUX</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <div class="background"></div>
+    
+    <!-- Top Bar -->
+    <div class="bar">
+        <div class="left-modules">
+            <div class="module" id="recyclage-module">
+                <div class="logo-container">
+                    <img src="recyclage.png" alt="Recyclage" class="recyclage-logo">
+                    <i class="fa-solid fa-circle-info info-icon"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="center-modules">
+            <div class="module" id="clock-module">
+                <span id="clock">12:00</span>
+            </div>
+        </div>
 
+        <div class="right-modules">
+            <div class="module" id="wifi-module">
+                <i class="fa-solid fa-wifi"></i>
+            </div>
+            <div class="module" id="battery-module">
+                <i class="fa-solid fa-battery-three-quarters"></i>
+                <span id="battery-level">85%</span>
+            </div>
+            <div class="module" id="shutdown-module" title="Éteindre">
+                <i class="fa-solid fa-power-off"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desktop Area -->
+    <div class="desktop">
+        <!-- Windows could go here -->
+    </div>
+
+    <!-- Dock -->
+    <div class="dock-container">
+        <div class="dock">
+            <div class="dock-item" title="Terminal">
+                <i class="fa-solid fa-terminal"></i>
+            </div>
+            <div class="dock-item" title="Firefox">
+                <i class="fa-brands fa-firefox-browser"></i>
+            </div>
+            <div class="dock-item" title="Files">
+                <i class="fa-solid fa-folder-open"></i>
+            </div>
+            <div class="dock-item" title="Code">
+                <i class="fa-solid fa-code"></i>
+            </div>
+            <div class="dock-item" title="Spotify">
+                <i class="fa-brands fa-spotify"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Popup -->
+    <div class="overlay" id="login-overlay">
+        <div class="standard-popup">
+            <div class="popup-header">
+                <i class="fa-solid fa-lock"></i>
+                <h3>Admin Access</h3>
+                <button class="close-btn" id="close-login-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="popup-body">
+                <p>Veuillez vous connecter en tant qu'administrateur.</p>
+                <div class="input-group">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" value="admin" readonly>
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-key"></i>
+                    <input type="password" id="password-input" placeholder="Mot de passe">
+                </div>
+                <button id="login-btn">Se connecter</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shutdown Popup -->
+    <div class="overlay" id="shutdown-overlay">
+        <div class="standard-popup">
+            <div class="popup-header">
+                <i class="fa-solid fa-power-off"></i>
+                <h3>Éteindre</h3>
+            </div>
+            <div class="popup-body">
+                <p>Voulez-vous vraiment éteindre la machine ?</p>
+                <div class="button-group">
+                    <button id="cancel-shutdown-btn" class="secondary-btn">Annuler</button>
+                    <button id="confirm-shutdown-btn" class="danger-btn">Éteindre</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recycling Info Popup -->
+    <div class="overlay" id="recycling-overlay">
+        <div class="carousel-popup">
+            <div class="popup-header">
+                <i class="fa-solid fa-recycle"></i>
+                <h3>Pourquoi Recycler ?</h3>
+            </div>
+            <div class="popup-body carousel-body no-padding">
+                <div class="carousel-container">
+                    <!-- Slide 1: Reduce -->
+                    <div class="carousel-slide active" id="slide-1">
+                        <div class="slide-image-container">
+                            <img src="reduce.png" alt="Reduce" class="slide-img">
+                        </div>
+                        <div class="slide-content">
+                            <h3>REDUCE</h3>
+                            <p>Minimisez votre impact numérique. WINUX optimise les ressources pour que vous n'ayez pas à changer de matériel.</p>
+                        </div>
+                    </div>
+
+                    <!-- Slide 2: Recycle -->
+                    <div class="carousel-slide" id="slide-2">
+                        <div class="slide-image-container">
+                            <img src="recycle.png" alt="Recycle" class="slide-img">
+                        </div>
+                        <div class="slide-content">
+                            <h3>RECYCLE</h3>
+                            <p>Donnez une seconde vie à vos composants. Le recyclage intelligent commence par une utilisation prolongée.</p>
+                        </div>
+                    </div>
+
+                    <!-- Slide 3: Reuse -->
+                    <div class="carousel-slide" id="slide-3">
+                        <div class="slide-image-container">
+                            <img src="reuse.png" alt="Reuse" class="slide-img">
+                        </div>
+                        <div class="slide-content">
+                            <h3>REUSE</h3>
+                            <p>Réutilisez, réinventez. Avec WINUX, votre vieux PC devient une machine de guerre moderne.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="carousel-controls">
+                    <div class="pagination-dots">
+                        <span class="dot active" data-slide="0"></span>
+                        <span class="dot" data-slide="1"></span>
+                        <span class="dot" data-slide="2"></span>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="skip-btn" id="skip-btn">Skip</button>
+                        <button class="next-btn" id="next-btn">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Startup Overlay -->
+    <div class="overlay active" id="startup-overlay">
+        <div class="startup-content">
+            <button id="start-btn">
+                <i class="fa-solid fa-power-off"></i>
+            </button>
+            <p>Démarrer le système</p>
+        </div>
+    </div>
+
+    <!-- Linking the compiled JS file -->
+    <script src="script.js"></script>
 </body>
 </html>
