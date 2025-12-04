@@ -1,21 +1,18 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Debug Nodemon TS",
-            "runtimeExecutable": "nodemon",
-            "program": "${workspaceFolder}/src/main.ts",
-            "restart": true,
-            "runtimeArgs": ["--inspect"],
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen",
-            "sourceMaps": true,
-            "resolveSourceMapLocations": [
-                "${workspaceFolder}/**",
-                "!**/node_modules/**"
-            ]
-        }
-    ]
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Debug Nodemon TS",
+			"runtimeExecutable": "nodemon",
+			"program": "${workspaceFolder}/src/server.ts",
+			"restart": true,
+			"runtimeArgs": ["--inspect"],
+			"console": "integratedTerminal",
+			"internalConsoleOptions": "neverOpen",
+			"sourceMaps": true,
+			"resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
+		}
+	]
 }

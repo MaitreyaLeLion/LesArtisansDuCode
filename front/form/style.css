@@ -1,0 +1,89 @@
+body {
+    font-family: "JetBrains Mono", monospace;
+    background: #0e0e11;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #e0e0e0;
+}
+
+.container {
+    background: rgba(20, 20, 26, 0.85);
+    padding: 30px;
+    border-radius: 16px;
+    width: 320px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 25px rgba(0, 255, 200, 0.25);
+    border: 1px solid rgba(0, 255, 200, 0.25);
+}
+
+h2 {
+    text-align: center;
+    color: #00f5d4;
+    margin-bottom: 20px;
+    text-shadow: 0 0 8px #00f5d4;
+}
+
+label {
+    display: block;
+    margin-top: 12px;
+    font-size: 14px;
+    color: #d0d0d0;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border-radius: 8px;
+    background: #16161c;
+    border: 1px solid #333;
+    color: #e0e0e0;
+    outline: none;
+    transition: 0.2s;
+}
+
+input:focus {
+    border-color: #00f5d4;
+    box-shadow: 0 0 8px #00f5d4;
+}
+
+button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #00f5d4, #00bbf9);
+    color: #0e0e11;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 12px rgba(0, 255, 200, 0.35);
+    transition: 0.25s;
+}
+
+button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 20px rgba(0, 255, 200, 0.55);
+}
+
+#message {
+    margin-top: 15px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.error {
+    color: #ff4d6d;
+    text-shadow: 0 0 6px rgba(255, 77, 109, 0.6);
+}
+
+.success {
+    color: #00f5d4;
+    text-shadow: 0 0 6px rgba(0, 245, 212, 0.7);
+}

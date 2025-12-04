@@ -6,6 +6,7 @@ import path from "path";
 import apiRouter from "./routes/api";
 
 const app = express();
+const PORT = 3001;
 
 const frontBuildPath = path.join(process.cwd(), "../front/WINUX..."); //A CHANGER
 
@@ -25,6 +26,10 @@ app.use(cookieParser());
 // Routes
 app.use("/api", apiRouter);
 
+app.get("/ping", (req, res) => {
+	res.send("Pong");
+});
+
 // Redirect all non-API to index
 app.get("/", (req, res) => {
 	res.sendFile(path.join(frontBuildPath, "index.html"));
@@ -32,6 +37,10 @@ app.get("/", (req, res) => {
 
 app.get("/*splat", (req, res) => {
 	res.sendFile(path.join(frontBuildPath, "index.html"));
+});
+
+app.listen(PORT, () => {
+	console.log(`Serveur lancé sur http://localhost:${PORT}`);
 });
 
 export default app;
