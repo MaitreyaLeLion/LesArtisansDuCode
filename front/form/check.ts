@@ -1,67 +1,90 @@
-class password_check {
-	private password: string;
+export class password_check {
+	public password: string;
 
 	constructor(password: string) {
 		this.password = password;
 	}
 
-	public isPasswordAlright(): boolean {
-		if (!this.isLengthOk()) return false;
-		if (!this.isEvenIndexUppercase()) return false;
-		if (!this.isDigitSumOk()) return false;
-		if (!this.hasCyrillicChars()) return false;
-		if (!this.hasEmojis()) return false;
-		if (!this.containsLastPresidentName()) return false;
-		if (!this.containsMoonLandingMonthBinary()) return false;
-		if (!this.containsIPAddress()) return false;
-
-		return true;
+	private result(success: boolean, message: string) {
+		return { success, message };
 	}
 
-	private isLengthOk(): boolean {
-		return this.password.length >= 32;
+	public isPasswordAlright(): { success: boolean; message: string } {
+		const checks = [
+			this.isLengthOk(),
+			this.isEvenIndexUppercase(),
+			this.isDigitSumOk(),
+			this.hasCyrillicChars(),
+			this.hasEmojis(),
+			this.containsLastPresidentName(),
+			this.containsMoonLandingMonthBinary(),
+			this.containsIPAddress(),
+		];
+
+		for (const check of checks) {
+			if (!check.success) return check;
+		}
+
+		return this.result(true, "Le mot de passe est valide !");
 	}
 
-	private isEvenIndexUppercase(): boolean {
+	// 1. Longueur >= 32
+	private isLengthOk() {
+		return this.result(this.password.length >= 32, "Le mot de passe doit être supérieur ou égal à 2^5 caractères.");
+	}
+
+	// 2. Lettre index pair en majuscule
+	private isEvenIndexUppercase() {
 		for (let i = 0; i < this.password.length; i += 2) {
 			const char = this.password[i];
+			if (!char) continue;
 			if (/[a-zA-Z]/.test(char) && char !== char.toUpperCase()) {
-				return false;
+				return this.result(false, "Chaque lettre qui est à un index pair doit être en majuscule (index de la premiere lettre:0)");
 			}
 		}
-		return true;
+		return this.result(true, "");
 	}
 
-	private isDigitSumOk(): boolean {
-		const digits = this.password.match(/\d/g);
-		if (!digits) return false;
+	// 3. Somme des chiffres = 8
+	private isDigitSumOk() {
+		const digits = this.password.match(/\d/g) ?? [];
+		const sum = digits.reduce((a, b) => a + Number(b), 0);
 
-		const sum = digits.map(Number).reduce((a, b) => a + b, 0);
-		return sum === 8;
+		return this.result(sum === 8, "La somme des chiffres du mot de passe doit être égale à 8.");
 	}
 
-	private hasCyrillicChars(): boolean {
-		const matches = this.password.match(/[\u0400-\u04FF]/g);
-		return matches !== null && matches.length >= 3;
+	// 4. Au moins 3 caractères cyrilliques
+	private hasCyrillicChars() {
+		const matches = this.password.match(/[\u0400-\u04FF]/g) ?? [];
+		return this.result(matches.length >= 3, "Le mot de passe doit contenir au moins 3 caractères en alphabet cyrillique.");
 	}
 
-	private hasEmojis(): boolean {
-		const matches = this.password.match(/[\p{Emoji}]/gu);
-		return matches !== null && matches.length >= 3;
+	// 5. Au moins 3 emojis
+	private hasEmojis() {
+		const matches = this.password.match(/[\p{Emoji}]/gu) ?? [];
+		return this.result(matches.length >= 3, "Le mot de passe doit contenir au moins 3 emojis.");
 	}
 
-	private containsLastPresidentName(): boolean {
-		const password = this.password.toLowerCase();
-		return password.includes("rené") || password.includes("rene");
+	// 6. Contient René (dernier président IVe République)
+	private containsLastPresidentName() {
+		const p = this.password.toLowerCase();
+		const ok = p.includes("rené") || p.includes("rene");
+
+		return this.result(ok, "Le mot de passe doit contenir le prénom du dernier président de la IVe République.");
 	}
 
-	private containsMoonLandingMonthBinary(): boolean {
-		return this.password.includes("0111");
+	// 7. Inclut 0111 (mois de juillet en binaire)
+	private containsMoonLandingMonthBinary() {
+		return this.result(this.password.includes("0111"), "Le mot de passe doit contenir le mois de l’alunissage en binaire.");
 	}
 
-	private containsIPAddress(): boolean {
+	// 8. Contient une IP valide
+	private containsIPAddress() {
 		const regex =
 			/\b(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\b/;
-		return regex.test(this.password);
+
+		return this.result(regex.test(this.password), "Le mot de passe doit contenir une adresse IP valide (format X.X.X.X de 0 à 255).");
 	}
 }
+
+// module.exports = password_check;
