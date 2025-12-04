@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laser Game</title>
+    <link rel="stylesheet" href="laserGameStyle.css">
+</head>
+<body>
+
+    <div id="ui-layer">
+        <div id="hud">
+            <div>SCORE: <span id="score-val">0</span></div>
+            <div>HP: <span id="hp-val">100%</span></div>
+            <div style="font-size: 0.8em; color: yellow;">DANGER: <span id="difficulty-val">x1.0</span></div>
+            <button id="mute-btn">🔊 SON: ON</button>
+        </div>
+        
+        <div id="game-over-modal" class="hidden">
+            <h1 style="color: red;">ECHEC SYSTÈME</h1>
+            <p id="final-score-msg"></p>
+            
+            <div class="leaderboard">
+                <h3>TOP PILOTES (LOCAL)</h3>
+                <ul id="leaderboard-list"></ul>
+            </div>
+
+            <button onclick="window.location.reload()">RELANCER</button>
+        </div>
+        
+        <div id="start-screen">
+            <h1>Laser Game</h1>
+            
+            <div class="input-group">
+                <input type="text" id="player-pseudo" placeholder="VOTRE PSEUDO" maxlength="12" value="Joueur 1">
+            </div>
+
+            <p>MOUVEMENT : <b>Z Q S D</b> | TIR : <b>SOURIS</b></p>
+            <button id="start-btn">DÉMARRER LA MISSION</button>
+        </div>
+    </div>
+
+    <div id="game-container"></div>
+
+    <div id="website-content">
+        <header><h1>Intranet Sécurisé</h1></header>
+        <main>
+            <div class="card"><h2>Data Center</h2><p>Flux de données critique.</p></div>
+            <div class="card"><h2>Proxy</h2><p>Bypass détecté.</p></div>
+            <p>Le système détecte une intrusion massive.</p>
+            <ul><li>Cluster A</li><li>Cluster B</li><li>Cluster C</li></ul>
+            <div class="card warning"><h2>NOYAU</h2><p>Surchauffe imminente.</p></div>
+        </main>
+    </div>
+
+    <audio id="sfx-spawn" src="../assets/oiia-oiia-sound.mp3" preload="auto"></audio>
+
+    <script src="laserGameLogic.js"></script>
+</body>
+</html>
