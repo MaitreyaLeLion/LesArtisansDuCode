@@ -12,14 +12,7 @@
     
     <!-- Top Bar -->
     <div class="bar">
-        <div class="left-modules">
-            <div class="module" id="recyclage-module">
-                <div class="logo-container">
-                    <img src="recyclage.png" alt="Recyclage" class="recyclage-logo">
-                    <i class="fa-solid fa-circle-info info-icon"></i>
-                </div>
-            </div>
-        </div>
+
         
         <div class="center-modules">
             <div class="module" id="clock-module">
@@ -43,7 +36,13 @@
 
     <!-- Desktop Area -->
     <div class="desktop">
-        <!-- Windows could go here -->
+        <div class="desktop-icon" id="recyclage-module">
+            <div class="icon-container">
+                <img src="recyclage.png" alt="Recyclage" class="desktop-img">
+                <i class="fa-solid fa-circle-info info-icon-desktop"></i>
+            </div>
+            <span class="icon-label">Recyclage</span>
+        </div>
     </div>
 
     <!-- Dock -->
@@ -64,28 +63,8 @@
             <div class="dock-item" title="Spotify">
                 <i class="fa-brands fa-spotify"></i>
             </div>
-        </div>
-    </div>
-
-    <!-- Login Popup -->
-    <div class="overlay" id="login-overlay">
-        <div class="standard-popup">
-            <div class="popup-header">
-                <i class="fa-solid fa-lock"></i>
-                <h3>Admin Access</h3>
-                <button class="close-btn" id="close-login-btn"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="popup-body">
-                <p>Veuillez vous connecter en tant qu'administrateur.</p>
-                <div class="input-group">
-                    <i class="fa-solid fa-user"></i>
-                    <input type="text" value="admin" readonly>
-                </div>
-                <div class="input-group">
-                    <i class="fa-solid fa-key"></i>
-                    <input type="password" id="password-input" placeholder="Mot de passe">
-                </div>
-                <button id="login-btn">Se connecter</button>
+            <div class="dock-item" title="Paramètres" id="settings-dock-item">
+                <i class="fa-solid fa-gear"></i>
             </div>
         </div>
     </div>
@@ -160,6 +139,50 @@
                         <button class="skip-btn" id="skip-btn">Skip</button>
                         <button class="next-btn" id="next-btn">Next</button>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Popup -->
+    <div class="overlay" id="settings-overlay">
+        <div class="settings-popup">
+            <div class="settings-sidebar">
+                <div class="sidebar-item active" data-tab="wallpaper">
+                    <i class="fa-solid fa-image"></i>
+                    <span>Fond d'écran</span>
+                </div>
+                <!-- Add more settings items here if needed -->
+            </div>
+            <div class="settings-content">
+                <div class="settings-header">
+                    <h3>Fond d'écran</h3>
+                    <button class="close-btn" id="close-settings-btn"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="wallpaper-grid">
+                    <div class="wallpaper-item" data-wallpaper="default">
+                        <div class="wallpaper-preview" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop');"></div>
+                        <span>Défaut</span>
+                    </div>
+                    <div class="wallpaper-item" data-wallpaper="france">
+                        <div class="wallpaper-preview" style="background-image: url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop');"></div>
+                        <span>France</span>
+                    </div>
+                    <div class="wallpaper-item" data-wallpaper="it">
+                        <div class="wallpaper-preview" style="background-image: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop');"></div>
+                        <span>Informatique</span>
+                    </div>
+                    <div class="wallpaper-item" data-wallpaper="universe">
+                        <div class="wallpaper-preview" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');"></div>
+                        <span>Univers</span>
+                    </div>
+                    <div class="wallpaper-item" data-wallpaper="nature">
+                        <div class="wallpaper-preview" style="background-image: url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2074&auto=format&fit=crop');"></div>
+                        <span>Nature</span>
+                    </div>
+                </div>
+                <div class="settings-actions">
+                    <button id="reset-wallpaper-btn" class="secondary-btn">Rétablir par défaut</button>
                 </div>
             </div>
         </div>

@@ -253,3 +253,78 @@ if (recyclingOverlay) {
     });
 }
 
+// Settings App Logic
+const settingsDockItem = document.getElementById("settings-dock-item") as HTMLDivElement;
+const settingsOverlay = document.getElementById("settings-overlay") as HTMLDivElement;
+const closeSettingsBtn = document.getElementById("close-settings-btn") as HTMLButtonElement;
+const wallpaperItems = document.querySelectorAll(".wallpaper-item");
+const resetWallpaperBtn = document.getElementById("reset-wallpaper-btn") as HTMLButtonElement;
+
+// Wallpaper Data (using Unsplash URLs as fallback)
+const wallpapers: { [key: string]: string } = {
+    default: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
+    france: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop",
+    it: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop",
+    universe: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop",
+    nature: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2074&auto=format&fit=crop"
+};
+
+// Open Settings
+if (settingsDockItem) {
+    settingsDockItem.addEventListener("click", () => {
+        settingsOverlay.classList.add("active");
+    });
+}
+
+// Close Settings
+if (closeSettingsBtn) {
+    closeSettingsBtn.addEventListener("click", () => {
+        settingsOverlay.classList.remove("active");
+    });
+}
+
+// Close on click outside
+if (settingsOverlay) {
+    settingsOverlay.addEventListener("click", (e) => {
+        if (e.target === settingsOverlay) {
+            settingsOverlay.classList.remove("active");
+        }
+    });
+}
+
+// Change Wallpaper
+wallpaperItems.forEach(item => {
+    item.addEventListener("click", () => {
+        // Remove active class from all
+        wallpaperItems.forEach(i => i.classList.remove("active"));
+        // Add active class to clicked
+        item.classList.add("active");
+
+        const wallpaperKey = item.getAttribute("data-wallpaper");
+        if (wallpaperKey && wallpapers[wallpaperKey]) {
+            let url = wallpapers[wallpaperKey];
+            
+            // If it's a local file that doesn't exist yet (placeholders), we might want to handle it visually
+            // For now, we'll just set it. If it's a color placeholder in CSS, this JS changes the body background.
+            
+            // Check if it's one of our placeholder keys and if we should use a color instead if image fails?
+            // For this demo, let's assume images might be missing, so we set background-image.
+            // If the image is missing, it won't show, but the color fallback in CSS (if any) would show.
+            // However, we are setting it on 'body'.
+            
+            document.body.style.backgroundImage = `url('${url}')`;
+        }
+    });
+});
+
+// Reset Wallpaper
+if (resetWallpaperBtn) {
+    resetWallpaperBtn.addEventListener("click", () => {
+        document.body.style.backgroundImage = `url('${wallpapers.default}')`;
+        
+        // Update active state in grid
+        wallpaperItems.forEach(i => i.classList.remove("active"));
+        const defaultItem = document.querySelector('.wallpaper-item[data-wallpaper="default"]');
+        if (defaultItem) defaultItem.classList.add("active");
+    });
+}

@@ -246,3 +246,70 @@ if (recyclingOverlay) {
     });
 }
 
+// Settings App Logic
+var settingsDockItem = document.getElementById("settings-dock-item");
+var settingsOverlay = document.getElementById("settings-overlay");
+var closeSettingsBtn = document.getElementById("close-settings-btn");
+var wallpaperItems = document.querySelectorAll(".wallpaper-item");
+var resetWallpaperBtn = document.getElementById("reset-wallpaper-btn");
+
+// Wallpaper Data
+var wallpapers = {
+    "default": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
+    "france": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop",
+    "it": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop",
+    "universe": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop",
+    "nature": "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2074&auto=format&fit=crop"
+};
+
+// Open Settings
+if (settingsDockItem) {
+    settingsDockItem.addEventListener("click", function () {
+        settingsOverlay.classList.add("active");
+    });
+}
+
+// Close Settings
+if (closeSettingsBtn) {
+    closeSettingsBtn.addEventListener("click", function () {
+        settingsOverlay.classList.remove("active");
+    });
+}
+
+// Close on click outside
+if (settingsOverlay) {
+    settingsOverlay.addEventListener("click", function (e) {
+        if (e.target === settingsOverlay) {
+            settingsOverlay.classList.remove("active");
+        }
+    });
+}
+
+// Change Wallpaper
+wallpaperItems.forEach(function (item) {
+    item.addEventListener("click", function () {
+        // Remove active class from all
+        wallpaperItems.forEach(function (i) { return i.classList.remove("active"); });
+        // Add active class to clicked
+        item.classList.add("active");
+
+        var wallpaperKey = item.getAttribute("data-wallpaper");
+        if (wallpaperKey && wallpapers[wallpaperKey]) {
+            var url = wallpapers[wallpaperKey];
+            document.body.style.backgroundImage = "url('" + url + "')";
+        }
+    });
+});
+
+// Reset Wallpaper
+if (resetWallpaperBtn) {
+    resetWallpaperBtn.addEventListener("click", function () {
+        document.body.style.backgroundImage = "url('" + wallpapers["default"] + "')";
+        
+        // Update active state in grid
+        wallpaperItems.forEach(function (i) { return i.classList.remove("active"); });
+        var defaultItem = document.querySelector('.wallpaper-item[data-wallpaper="default"]');
+        if (defaultItem) defaultItem.classList.add("active");
+    });
+}
+
