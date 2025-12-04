@@ -531,8 +531,21 @@ class Game {
         const STORAGE_KEY = 'dom-blaster-scores';
         const existingData = localStorage.getItem(STORAGE_KEY);
         let scores = existingData ? JSON.parse(existingData) : [];
-        scores.push({ name: this.pseudo, score: this.score, date: new Date().toLocaleDateString() });
+        // 1. Ajouter le nouveau score
+        scores.push({
+            name: this.pseudo,
+            score: this.score,
+            // On utilise le format YYYY-MM-DD pour que le tri par date du Dashboard fonctionne parfaitement
+            date: new Date().toISOString().split('T')[0]
+        });
+        // ---------------------------------------------------------
+        // LA LIGNE MANQUANTE ETAIT ICI !
+        // On renvoie les données dans la mémoire du navigateur
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
+        // ---------------------------------------------------------
+        // 3. Trier pour l'affichage (Meilleur score en premier)
         scores.sort((a, b) => b.score - a.score);
+        // On retourne le top 5 pour l'écran de Game Over
         return scores.slice(0, 5);
     }
     gameOver() {
