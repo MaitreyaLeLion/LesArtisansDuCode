@@ -3,7 +3,7 @@ import cookieParser from "cookie-parser";
 import express from "express";
 import cors from "cors";
 import path from "path";
-import apiRouter from "./routes/api";
+import apiRouter from "./routes/api.js";
 
 const app = express();
 const PORT = 3001;
@@ -23,11 +23,24 @@ app.use(express.static(frontBuildPath));
 app.use(express.json());
 app.use(cookieParser());
 
-// Routes
-app.use("/api", apiRouter);
+app.get("/api/get_IP", (req, res) => {
+	let ip = req.ip;
+	if (!ip) {
+		res.status(404).send("Invalid IP.");
+		return;
+	}
 
-app.get("/ping", (req, res) => {
-	res.send("Pong");
+	// Si IPv6 format ::ffff:IPv4
+	if (ip.startsWith("::ffff:")) {
+		ip = ip.split(":").pop();
+	}
+
+	res.send(`Votre IP IPv4 est : ${ip}`);
+});
+
+app.get("/api/snake_password", (req, res) => {
+	//a implémenter le check en BD
+	res.json({ hasRequiredLevel: true });
 });
 
 // Redirect all non-API to index

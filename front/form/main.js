@@ -9,12 +9,14 @@ formButton.addEventListener("click", async (e) => {
     const result = await checker.isPasswordAlright();
     if (!result.success) {
         message.className = "error";
-        passwordInput.value = "";
     }
     else {
-        // message.className = "success";
-        showCaptcha();
+        message.className = "success";
+        if (!result.finalStep) {
+            showCaptcha();
+        }
     }
+    passwordInput.value = "";
     message.textContent = result.message;
 });
 // Création de l'overlay

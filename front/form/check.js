@@ -4,10 +4,13 @@ export class password_check {
     constructor(password) {
         this.password = password;
     }
-    result(success, message) {
-        return { success, message };
+    result(success, message, finalStep = false) {
+        return { success, message, finalStep };
     }
     async isPasswordAlright() {
+        if (await this.finishedSnake()) {
+            return this.result(true, "Bravo ! Vous êtes maintenant connecté. Cependant, cela ne change rien.", true);
+        }
         const checks = [
             this.isLengthOk(),
             this.isEvenIndexUppercase(),
@@ -16,14 +19,24 @@ export class password_check {
             this.hasEmojis(),
             this.containsLastPresidentName(),
             this.containsMoonLandingMonthBinary(),
-            // this.containsIPAddress(),
+            this.containsIPAddress(),
         ];
         for (const check of checks) {
             const resolvedCheck = await check;
             if (!resolvedCheck.success)
                 return resolvedCheck;
         }
-        return this.result(true, "Le mot de passe est valide !");
+        return this.result(true, "Votre mot de passe est valide ! Cependant veuillez entrer le mot de passe fourni lorsque vous arrivez au niveau 20 dans le jeu snake.");
+    }
+    async finishedSnake() {
+        if (this.password == "1234") {
+            const response = await fetch(DOMAIN_NAME + "api/snake_password");
+            const data = await response.json();
+            if (data.hasRequiredLevel) {
+                return true;
+            }
+        }
+        return false;
     }
     // 1. Longueur >= 32
     isLengthOk() {

@@ -5,7 +5,9 @@ export declare class password_check {
     isPasswordAlright(): Promise<{
         success: boolean;
         message: string;
+        finalStep: boolean;
     }>;
+    private finishedSnake;
     private isLengthOk;
     private isEvenIndexUppercase;
     private isDigitSumOk;
