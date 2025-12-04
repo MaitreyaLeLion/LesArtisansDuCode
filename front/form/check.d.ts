@@ -2,10 +2,10 @@ export declare class password_check {
     password: string;
     constructor(password: string);
     private result;
-    isPasswordAlright(): {
+    isPasswordAlright(): Promise<{
         success: boolean;
         message: string;
-    };
+    }>;
     private isLengthOk;
     private isEvenIndexUppercase;
     private isDigitSumOk;

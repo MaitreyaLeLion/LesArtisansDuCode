@@ -13,7 +13,7 @@ const frontBuildPath = path.join(process.cwd(), "../front/WINUX..."); //A CHANGE
 // Middlewares
 app.use(
 	cors({
-		origin: "http://localhost:5173", //A CHANGER
+		origin: "http://127.0.0.1:5500", //A CHANGER
 		methods: ["GET", "POST", "PUT", "DELETE"],
 		credentials: true,
 	})

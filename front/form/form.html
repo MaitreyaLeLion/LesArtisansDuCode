@@ -21,27 +21,6 @@
 			</form>
 		</div>
 
-		<script type="module">
-			import { password_check } from "./check.js";
-
-			const formButton = document.getElementById("submitBtn");
-			const message = document.getElementById("message");
-
-			formButton.addEventListener("click", (e) => {
-				const passwordInput = document.getElementById("password");
-				const password = passwordInput.value;
-				const checker = new password_check(password);
-				if (!checker.success) {
-					message.className = "error";
-					passwordInput.value = "";
-				} else {
-					message.className = "success";
-				}
-
-				const msg = checker.isPasswordAlright().message;
-				message.textContent = msg;
-				// message.className = "success";
-			});
-		</script>
+		<script type="module" src="./main.js"></script>
 	</body>
 </html>

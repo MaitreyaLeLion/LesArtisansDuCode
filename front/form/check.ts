@@ -1,3 +1,6 @@
+// const DOMAIN_NAME = "http://winux.io/";
+const DOMAIN_NAME = "http://localhost:3001/";
+
 export class password_check {
 	public password: string;
 
@@ -9,8 +12,9 @@ export class password_check {
 		return { success, message };
 	}
 
-	public isPasswordAlright(): { success: boolean; message: string } {
+	public async isPasswordAlright(): Promise<{ success: boolean; message: string }> {
 		const checks = [
+			this.containsIPAddress(),
 			this.isLengthOk(),
 			this.isEvenIndexUppercase(),
 			this.isDigitSumOk(),
@@ -18,11 +22,11 @@ export class password_check {
 			this.hasEmojis(),
 			this.containsLastPresidentName(),
 			this.containsMoonLandingMonthBinary(),
-			this.containsIPAddress(),
 		];
 
 		for (const check of checks) {
-			if (!check.success) return check;
+			const resolvedCheck = await check;
+			if (!resolvedCheck.success) return resolvedCheck;
 		}
 
 		return this.result(true, "Le mot de passe est valide !");
@@ -45,12 +49,12 @@ export class password_check {
 		return this.result(true, "");
 	}
 
-	// 3. Somme des chiffres = 8
+	// 3. Somme des chiffres = 56
 	private isDigitSumOk() {
 		const digits = this.password.match(/\d/g) ?? [];
 		const sum = digits.reduce((a, b) => a + Number(b), 0);
 
-		return this.result(sum === 8, "La somme des chiffres du mot de passe doit être égale à 8.");
+		return this.result(sum === 56, "La somme des chiffres du mot de passe doit être égale à 56.");
 	}
 
 	// 4. Au moins 3 caractères cyrilliques
@@ -79,11 +83,15 @@ export class password_check {
 	}
 
 	// 8. Contient une IP valide
-	private containsIPAddress() {
-		const regex =
-			/\b(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\b/;
+	private async containsIPAddress() {
+		const response = await fetch(DOMAIN_NAME + "api/get_IP");
+		const data = await response.json();
+		const IP = data.IP;
 
-		return this.result(regex.test(this.password), "Le mot de passe doit contenir une adresse IP valide (format X.X.X.X de 0 à 255).");
+		// const regex =
+		// 	/\b(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\b/;
+
+		return this.result(this.password.includes(IP), "Le mot de passe doit contenir une adresse IP valide (format X.X.X.X de 0 à 255).");
 	}
 }
 
