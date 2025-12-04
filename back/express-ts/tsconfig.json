@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"rootDir": "./src",
+		"outDir": "./dist",
+		"module": "commonjs",
+		"esModuleInterop": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"allowImportingTsExtensions": true,
+		"noEmit": true,
+		"baseUrl": ".",
+		"paths": {
+			"@src/*": ["src/*"]
+		},
+		"plugins": [
+			{
+				"transform": "ts-transformer-keys/transformer"
+			}
+		]
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules"]
+}
