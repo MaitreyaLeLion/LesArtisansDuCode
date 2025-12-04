@@ -1,8 +1,11 @@
-// script.ts
+// script.js
+
+// State
 const state = {
-    isLoggedIn: false,
-    batteryLevel: 85,
+  isLoggedIn: false,
+  batteryLevel: 85,
 };
+
 // DOM Elements
 const overlay = document.getElementById("login-overlay");
 const loginBtn = document.getElementById("login-btn");
@@ -10,79 +13,88 @@ const passwordInput = document.getElementById("password-input");
 const clockElement = document.getElementById("clock");
 const batteryElement = document.getElementById("battery-level");
 const dockItems = document.querySelectorAll(".dock-item");
+
 // Initialize
 function init() {
-    updateClock();
-    setInterval(updateClock, 1000);
-    // Startup logic
-    const startupOverlay = document.getElementById("startup-overlay");
-    const startBtn = document.getElementById("start-btn");
-    if (startBtn && startupOverlay) {
-        startBtn.addEventListener("click", () => {
-            startupOverlay.classList.add("hidden");
-            setTimeout(() => {
-                startupOverlay.style.display = "none";
-            }, 1000);
-        });
-    }
-    // Event Listeners
-    if (loginBtn) {
-        loginBtn.addEventListener("click", handleLogin);
-    }
-    if (passwordInput) {
-        passwordInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter")
-                handleLogin();
-        });
-    }
-    // Dock animations
-    dockItems.forEach((item) => {
-        item.addEventListener("click", () => {
-            animateIcon(item);
-        });
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // Startup logic
+  const startupOverlay = document.getElementById("startup-overlay");
+  const startBtn = document.getElementById("start-btn");
+
+  if (startBtn && startupOverlay) {
+    startBtn.addEventListener("click", () => {
+      startupOverlay.classList.add("hidden");
+      setTimeout(() => {
+        startupOverlay.style.display = "none";
+      }, 1000);
     });
+  }
+
+  // Event Listeners
+  if (loginBtn) {
+      loginBtn.addEventListener("click", handleLogin);
+  }
+  
+  if (passwordInput) {
+      passwordInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") handleLogin();
+      });
+  }
+
+  // Dock animations
+  dockItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      animateIcon(item);
+    });
+  });
 }
+
 function updateClock() {
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
+    
     // Format date: "Lun 4 Dec"
     const options = { weekday: 'short', day: 'numeric', month: 'short' };
     const dateString = now.toLocaleDateString('fr-FR', options);
+
     if (clockElement) {
         clockElement.textContent = `${dateString} ${hours}:${minutes}`;
     }
 }
+
 function handleLogin() {
-    if (!passwordInput)
-        return;
-    const password = passwordInput.value;
-    if (password.length > 0) {
-        // Simulate login
-        state.isLoggedIn = true;
-        if (overlay)
-            overlay.classList.remove("active");
-        // Clear input
-        passwordInput.value = "";
-        // Play a sound or show a notification could go here
-        console.log("Logged in as admin");
+  if (!passwordInput) return;
+  const password = passwordInput.value;
+  if (password.length > 0) {
+    // Simulate login
+    state.isLoggedIn = true;
+    if (overlay) overlay.classList.remove("active");
+    // Clear input
+    passwordInput.value = "";
+
+    // Play a sound or show a notification could go here
+    console.log("Logged in as admin");
+  } else {
+    // Shake animation for error
+    const popup = document.querySelector("#login-overlay .standard-popup");
+    if (popup) {
+        popup.style.animation = "none";
+        popup.offsetHeight; /* trigger reflow */
+        popup.style.animation = "shake 0.5s";
     }
-    else {
-        // Shake animation for error
-        const popup = document.querySelector("#login-overlay .standard-popup");
-        if (popup) {
-            popup.style.animation = "none";
-            popup.offsetHeight; /* trigger reflow */
-            popup.style.animation = "shake 0.5s";
-        }
-    }
+  }
 }
+
 function animateIcon(element) {
-    element.style.transform = "scale(0.8)";
-    setTimeout(() => {
-        element.style.transform = "";
-    }, 150);
+  element.style.transform = "scale(0.8)";
+  setTimeout(() => {
+    element.style.transform = "";
+  }, 150);
 }
+
 // Add shake animation style dynamically
 const styleSheet = document.createElement("style");
 styleSheet.innerText = `
@@ -95,96 +107,104 @@ styleSheet.innerText = `
 }
 `;
 document.head.appendChild(styleSheet);
+
 // Start
 document.addEventListener("DOMContentLoaded", init);
+
 // Shutdown Logic
 const shutdownModule = document.getElementById("shutdown-module");
 const shutdownOverlay = document.getElementById("shutdown-overlay");
 const cancelShutdownBtn = document.getElementById("cancel-shutdown-btn");
 const confirmShutdownBtn = document.getElementById("confirm-shutdown-btn");
 const closeShutdownBtn = document.getElementById("close-shutdown-btn");
+
 if (shutdownModule) {
     shutdownModule.addEventListener("click", () => {
         shutdownOverlay.classList.add("active");
     });
 }
+
 if (cancelShutdownBtn) {
     cancelShutdownBtn.addEventListener("click", () => {
         shutdownOverlay.classList.remove("active");
     });
 }
+
 if (closeShutdownBtn) {
     closeShutdownBtn.addEventListener("click", () => {
         shutdownOverlay.classList.remove("active");
     });
 }
-if (confirmShutdownBtn) {
+
+  if (confirmShutdownBtn) {
     confirmShutdownBtn.addEventListener("click", () => {
-        console.log("Shutdown button clicked");
-        // Simulate shutdown
-        const startupOverlay = document.getElementById("startup-overlay");
-        console.log("Startup overlay found:", startupOverlay);
-        // Hide shutdown popup
-        shutdownOverlay.classList.remove("active");
-        // Reset state
-        state.isLoggedIn = false;
-        if (passwordInput)
-            passwordInput.value = "";
-        if (overlay)
-            overlay.classList.remove("active");
-        // Show startup overlay
-        if (startupOverlay) {
-            startupOverlay.style.display = ""; // Clear display: none
-            // Force reflow
-            startupOverlay.offsetHeight;
-            startupOverlay.classList.remove("hidden");
-            console.log("Startup overlay shown");
-        }
+      console.log("Shutdown button clicked");
+      // Simulate shutdown
+      const startupOverlay = document.getElementById("startup-overlay");
+      console.log("Startup overlay found:", startupOverlay);
+
+      // Hide shutdown popup
+      shutdownOverlay.classList.remove("active");
+
+      // Reset state
+      state.isLoggedIn = false;
+      if (passwordInput) passwordInput.value = "";
+      if (overlay) overlay.classList.remove("active");
+
+      // Show startup overlay
+      if (startupOverlay) {
+        startupOverlay.style.display = ""; // Clear display: none
+        // Force reflow
+        startupOverlay.offsetHeight;
+        startupOverlay.classList.remove("hidden");
+        console.log("Startup overlay shown");
+      }
     });
-}
-else {
-    console.error("Confirm shutdown button not found");
-}
+  } else {
+      console.error("Confirm shutdown button not found");
+  }
+
 // Carousel Logic
 const recyclingModule = document.getElementById("recyclage-module");
 const recyclingOverlay = document.getElementById("recycling-overlay");
 const closeRecyclingBtn = document.getElementById("close-recycling-btn");
+
 // Carousel Elements
 const slides = document.querySelectorAll(".carousel-slide");
 const dots = document.querySelectorAll(".dot");
 const nextBtn = document.getElementById("next-btn");
 const skipBtn = document.getElementById("skip-btn");
 let currentSlide = 0;
+
 function showSlide(index) {
     slides.forEach((slide, i) => {
         if (i === index) {
             slide.classList.add("active");
-        }
-        else {
+        } else {
             slide.classList.remove("active");
         }
     });
+
     dots.forEach((dot, i) => {
         if (i === index) {
             dot.classList.add("active");
-        }
-        else {
+        } else {
             dot.classList.remove("active");
         }
     });
+
     if (index === slides.length - 1) {
         nextBtn.textContent = "Get Started";
-    }
-    else {
+    } else {
         nextBtn.textContent = "Next";
     }
 }
+
 function nextSlide() {
     if (currentSlide < slides.length - 1) {
         currentSlide++;
         showSlide(currentSlide);
-    }
-    else {
+    } else {
         // Close popup on last slide
         recyclingOverlay.classList.remove("active");
         // Reset to first slide for next time
@@ -194,6 +214,7 @@ function nextSlide() {
         }, 500);
     }
 }
+
 if (recyclingModule) {
     recyclingModule.addEventListener("click", () => {
         recyclingOverlay.classList.add("active");
@@ -201,25 +222,30 @@ if (recyclingModule) {
         showSlide(0);
     });
 }
+
 if (closeRecyclingBtn) {
     closeRecyclingBtn.addEventListener("click", () => {
         recyclingOverlay.classList.remove("active");
     });
 }
+
 if (nextBtn) {
     nextBtn.addEventListener("click", nextSlide);
 }
+
 if (skipBtn) {
     skipBtn.addEventListener("click", () => {
         recyclingOverlay.classList.remove("active");
     });
 }
+
 dots.forEach((dot, index) => {
     dot.addEventListener("click", () => {
         currentSlide = index;
         showSlide(currentSlide);
     });
 });
+
 // Close recycling popup when clicking outside
 if (recyclingOverlay) {
     recyclingOverlay.addEventListener("click", (e) => {
@@ -228,7 +254,7 @@ if (recyclingOverlay) {
         }
     });
 }
-// Settings App Logic
+
 // Settings App Logic
 const settingsDockItem = document.getElementById("settings-dock-item");
 const settingsOverlay = document.getElementById("settings-overlay");
@@ -238,7 +264,7 @@ const resetWallpaperBtn = document.getElementById("reset-wallpaper-btn");
 const settingsSidebarItems = document.querySelectorAll(".settings-sidebar .sidebar-item");
 const settingsSections = document.querySelectorAll(".settings-section");
 
-// Wallpaper Data (using Unsplash URLs as fallback)
+// Wallpaper Data
 const wallpapers = {
     default: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
     france: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop",
@@ -297,14 +323,7 @@ settingsSidebarItems.forEach(item => {
         }
     });
 });
-// Close on click outside
-if (settingsOverlay) {
-    settingsOverlay.addEventListener("click", (e) => {
-        if (e.target === settingsOverlay) {
-            settingsOverlay.classList.remove("active");
-        }
-    });
-}
+
 // Change Wallpaper
 wallpaperItems.forEach(item => {
     item.addEventListener("click", () => {
@@ -312,28 +331,24 @@ wallpaperItems.forEach(item => {
         wallpaperItems.forEach(i => i.classList.remove("active"));
         // Add active class to clicked
         item.classList.add("active");
+
         const wallpaperKey = item.getAttribute("data-wallpaper");
         if (wallpaperKey && wallpapers[wallpaperKey]) {
             let url = wallpapers[wallpaperKey];
-            // If it's a local file that doesn't exist yet (placeholders), we might want to handle it visually
-            // For now, we'll just set it. If it's a color placeholder in CSS, this JS changes the body background.
-            // Check if it's one of our placeholder keys and if we should use a color instead if image fails?
-            // For this demo, let's assume images might be missing, so we set background-image.
-            // If the image is missing, it won't show, but the color fallback in CSS (if any) would show.
-            // However, we are setting it on 'body'.
             document.body.style.backgroundImage = `url('${url}')`;
         }
     });
 });
+
 // Reset Wallpaper
 if (resetWallpaperBtn) {
     resetWallpaperBtn.addEventListener("click", () => {
         document.body.style.backgroundImage = `url('${wallpapers.default}')`;
+        
         // Update active state in grid
         wallpaperItems.forEach(i => i.classList.remove("active"));
         const defaultItem = document.querySelector('.wallpaper-item[data-wallpaper="default"]');
-        if (defaultItem)
-            defaultItem.classList.add("active");
+        if (defaultItem) defaultItem.classList.add("active");
     });
 }
 
@@ -354,7 +369,6 @@ if (closePremiumBtn) {
     });
 }
 
-
 if (premiumOverlay) {
     premiumOverlay.addEventListener("click", (e) => {
         if (e.target === premiumOverlay) {
@@ -369,8 +383,10 @@ class MusicPlayer {
         this.playlist = [];
         this.currentTrackIndex = 0;
         this.isPlaying = false;
-        
+        this.db = null;
         this.audio = new Audio();
+
+        // DOM Elements
         this.overlay = document.getElementById("music-player-overlay");
         this.playPauseBtn = document.getElementById("music-play-pause-btn");
         this.prevBtn = document.getElementById("music-prev-btn");
@@ -385,7 +401,78 @@ class MusicPlayer {
         this.addMusicInput = document.getElementById("add-music-input");
         this.albumArtEl = document.querySelector(".album-art");
 
+        this.initDB();
         this.initEventListeners();
+    }
+
+    initDB() {
+        const request = indexedDB.open("MusicPlayerDB", 1);
+
+        request.onerror = (event) => {
+            console.error("Database error:", event);
+        };
+
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains("tracks")) {
+                db.createObjectStore("tracks", { keyPath: "id", autoIncrement: true });
+            }
+        };
+
+        request.onsuccess = (event) => {
+            this.db = event.target.result;
+            this.loadTracksFromDB();
+        };
+    }
+
+    saveTrackToDB(track) {
+        if (!this.db || !track.file) return;
+
+        const transaction = this.db.transaction(["tracks"], "readwrite");
+        const store = transaction.objectStore("tracks");
+        
+        const trackData = {
+            title: track.title,
+            artist: track.artist,
+            file: track.file,
+            timestamp: new Date().getTime()
+        };
+
+        store.add(trackData);
+    }
+
+    loadTracksFromDB() {
+        if (!this.db) return;
+
+        const transaction = this.db.transaction(["tracks"], "readonly");
+        const store = transaction.objectStore("tracks");
+        const request = store.getAll();
+
+        request.onsuccess = () => {
+            const tracks = request.result;
+            if (tracks && tracks.length > 0) {
+                tracks.forEach((trackData) => {
+                    const url = URL.createObjectURL(trackData.file);
+                    this.playlist.push({
+                        title: trackData.title,
+                        artist: trackData.artist,
+                        url: url,
+                        file: trackData.file
+                    });
+                });
+                this.updatePlaylistUI();
+                
+                if (this.playlist.length > 0 && !this.audio.src) {
+                    this.currentTrackIndex = 0;
+                    const track = this.playlist[0];
+                    this.audio.src = track.url;
+                    this.audio.load();
+                    if (this.trackTitleEl) this.trackTitleEl.textContent = track.title;
+                    if (this.trackArtistEl) this.trackArtistEl.textContent = track.artist;
+                    this.updatePlaylistUI();
+                }
+            }
+        };
     }
 
     initEventListeners() {
@@ -442,6 +529,15 @@ class MusicPlayer {
         if (closePlayerBtn) {
             closePlayerBtn.addEventListener("click", () => {
                 if (this.overlay) this.overlay.classList.remove("active");
+            });
+        }
+
+        // Close on click outside
+        if (this.overlay) {
+            this.overlay.addEventListener("click", (e) => {
+                if (e.target === this.overlay) {
+                    this.overlay.classList.remove("active");
+                }
             });
         }
     }
@@ -527,8 +623,6 @@ class MusicPlayer {
         if (input.files) {
             Array.from(input.files).forEach(file => {
                 const url = URL.createObjectURL(file);
-                // Simple parsing of filename for title/artist
-                // "Artist - Title.mp3" or just "Title.mp3"
                 let title = file.name.replace(/\.[^/.]+$/, "");
                 let artist = "Artiste inconnu";
                 
@@ -538,22 +632,23 @@ class MusicPlayer {
                     title = parts.slice(1).join("-").trim();
                 }
 
-                this.playlist.push({
+                const track = {
                     title,
                     artist,
                     url,
                     file
-                });
+                };
+
+                this.playlist.push(track);
+                this.saveTrackToDB(track);
             });
 
             this.updatePlaylistUI();
             
-            // If this was the first track added, load it
             if (this.playlist.length === input.files.length) {
                 this.loadTrack(0);
             }
         }
-        // Reset input
         input.value = "";
     }
 
@@ -572,7 +667,7 @@ class MusicPlayer {
                 </div>
             `;
             li.addEventListener("click", () => this.loadTrack(index));
-            this.playlistEl?.appendChild(li);
+            this.playlistEl.appendChild(li);
         });
     }
 }

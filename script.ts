@@ -408,6 +408,7 @@ class MusicPlayer {
     private currentTrackIndex: number = 0;
     private audio: HTMLAudioElement;
     private isPlaying: boolean = false;
+    private db: IDBDatabase | null = null;
 
     // DOM Elements
     private overlay: HTMLElement | null;
@@ -440,7 +441,82 @@ class MusicPlayer {
         this.addMusicInput = document.getElementById("add-music-input") as HTMLInputElement;
         this.albumArtEl = document.querySelector(".album-art");
 
+        this.initDB();
         this.initEventListeners();
+    }
+
+    private initDB() {
+        const request = indexedDB.open("MusicPlayerDB", 1);
+
+        request.onerror = (event) => {
+            console.error("Database error:", event);
+        };
+
+        request.onupgradeneeded = (event) => {
+            const db = (event.target as IDBOpenDBRequest).result;
+            if (!db.objectStoreNames.contains("tracks")) {
+                db.createObjectStore("tracks", { keyPath: "id", autoIncrement: true });
+            }
+        };
+
+        request.onsuccess = (event) => {
+            this.db = (event.target as IDBOpenDBRequest).result;
+            this.loadTracksFromDB();
+        };
+    }
+
+    private saveTrackToDB(track: Track) {
+        if (!this.db || !track.file) return;
+
+        const transaction = this.db.transaction(["tracks"], "readwrite");
+        const store = transaction.objectStore("tracks");
+        
+        const trackData = {
+            title: track.title,
+            artist: track.artist,
+            file: track.file,
+            timestamp: new Date().getTime()
+        };
+
+        store.add(trackData);
+    }
+
+    private loadTracksFromDB() {
+        if (!this.db) return;
+
+        const transaction = this.db.transaction(["tracks"], "readonly");
+        const store = transaction.objectStore("tracks");
+        const request = store.getAll();
+
+        request.onsuccess = () => {
+            const tracks = request.result;
+            if (tracks && tracks.length > 0) {
+                // Clear existing playlist if it's empty (just to be safe, though it should be empty on init)
+                // Actually we append.
+                tracks.forEach((trackData: any) => {
+                    const url = URL.createObjectURL(trackData.file);
+                    this.playlist.push({
+                        title: trackData.title,
+                        artist: trackData.artist,
+                        url: url,
+                        file: trackData.file
+                    });
+                });
+                this.updatePlaylistUI();
+                
+                // If we have tracks and nothing is playing/loaded, load the first one
+                if (this.playlist.length > 0 && !this.audio.src) {
+                    // Load first track but don't auto-play
+                    this.currentTrackIndex = 0;
+                    const track = this.playlist[0];
+                    this.audio.src = track.url;
+                    this.audio.load();
+                    if (this.trackTitleEl) this.trackTitleEl.textContent = track.title;
+                    if (this.trackArtistEl) this.trackArtistEl.textContent = track.artist;
+                    this.updatePlaylistUI();
+                }
+            }
+        };
     }
 
     private initEventListeners() {
@@ -497,6 +573,15 @@ class MusicPlayer {
         if (closePlayerBtn) {
             closePlayerBtn.addEventListener("click", () => {
                 if (this.overlay) this.overlay.classList.remove("active");
+            });
+        }
+
+        // Close on click outside
+        if (this.overlay) {
+            this.overlay.addEventListener("click", (e) => {
+                if (e.target === this.overlay) {
+                    this.overlay?.classList.remove("active");
+                }
             });
         }
     }
@@ -593,12 +678,15 @@ class MusicPlayer {
                     title = parts.slice(1).join("-").trim();
                 }
 
-                this.playlist.push({
+                const track = {
                     title,
                     artist,
                     url,
                     file
-                });
+                };
+
+                this.playlist.push(track);
+                this.saveTrackToDB(track);
             });
 
             this.updatePlaylistUI();
