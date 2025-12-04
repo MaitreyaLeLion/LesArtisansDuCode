@@ -6,7 +6,7 @@ import path from "path";
 import apiRouter from "./routes/api";
 const app = express();
 const PORT = 3001;
-const frontBuildPath = path.join(process.cwd(), "../front/WINUX..."); //A CHANGER
+const frontBuildPath = path.join(process.cwd(), "../.."); //A CHANGER
 // Middlewares
 app.use(cors({
     origin: "http://localhost:5173", //A CHANGER
