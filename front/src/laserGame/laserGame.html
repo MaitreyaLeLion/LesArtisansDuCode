@@ -3,57 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laser Game</title>
+    <title>Laser Game 8-BIT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="laserGameStyle.css">
 </head>
 <body>
 
     <div id="ui-layer">
-        <div id="hud">
-            <div>SCORE: <span id="score-val">0</span></div>
-            <div>HP: <span id="hp-val">100%</span></div>
-            <div style="font-size: 0.8em; color: yellow;">DANGER: <span id="difficulty-val">x1.0</span></div>
-            <button id="mute-btn">🔊 SON: ON</button>
+        <div id="hud" class="nes-container is-rounded is-dark">
+            <div>SCORE <span id="score-val" class="nes-text is-warning">0</span></div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                HP: <progress id="hp-bar" class="nes-progress is-success" value="100" max="100" style="height: 20px; width: 100px;"></progress>
+                <span id="hp-val" style="font-size:10px">100%</span>
+            </div>
+            <div style="font-size: 10px; margin-top:5px;">LVL: <span id="difficulty-val">x1.0</span></div>
+            
+            <button id="mute-btn" class="nes-btn is-primary is-small" style="margin-top:10px;">🔊 SON</button>
         </div>
         
         <div id="game-over-modal" class="hidden">
-            <h1 style="color: red;">ECHEC SYSTÈME</h1>
-            <p id="final-score-msg"></p>
-            
-            <div class="leaderboard">
-                <h3>TOP PILOTES (LOCAL)</h3>
-                <ul id="leaderboard-list"></ul>
-            </div>
+            <div class="nes-container is-dark with-title is-centered" style="background:black; max-width: 600px;">
+                <p class="title">GAME OVER</p>
+                <h2 class="nes-text is-error">ECHEC MISSION</h2>
+                <p id="final-score-msg" style="margin-bottom: 20px;"></p>
+                
+                <div class="leaderboard" style="text-align:left; margin-bottom:20px;">
+                    <p>TOP PILOTES:</p>
+                    <ul id="leaderboard-list" class="nes-list is-disc"></ul>
+                </div>
 
-            <button onclick="window.location.reload()">RELANCER</button>
+                <button id="restart-btn" class="nes-btn is-warning">INSERT COIN (REJOUER)</button>
+            </div>
         </div>
         
         <div id="start-screen">
-            <h1>Laser Game</h1>
-            
-            <div class="input-group">
-                <input type="text" id="player-pseudo" placeholder="VOTRE PSEUDO" maxlength="12" value="Joueur 1">
+            <div class="nes-container with-title is-centered is-dark" style="width: 500px;">
+                <p class="title">1985 CORP</p>
+                <h1>LASER GAME</h1>
+                <br>
+                <div class="nes-field">
+                    <label for="player-pseudo">PILOTE</label>
+                    <input type="text" id="player-pseudo" class="nes-input is-dark" placeholder="JOUEUR 1" maxlength="12">
+                </div>
+                <br>
+                <p style="font-size: 10px;">Z Q S D to MOVE <br> CLICK to SHOOT</p>
+                <br>
+                <button id="start-btn" class="nes-btn is-success">PRESS START</button>
             </div>
-
-            <p>MOUVEMENT : <b>Z Q S D</b> | TIR : <b>SOURIS</b></p>
-            <button id="start-btn">DÉMARRER LA MISSION</button>
         </div>
     </div>
 
     <div id="game-container"></div>
+    
+    <div id="website-content" style="display:none;"></div>
 
-    <div id="website-content">
-        <header><h1>Intranet Sécurisé</h1></header>
-        <main>
-            <div class="card"><h2>Data Center</h2><p>Flux de données critique.</p></div>
-            <div class="card"><h2>Proxy</h2><p>Bypass détecté.</p></div>
-            <p>Le système détecte une intrusion massive.</p>
-            <ul><li>Cluster A</li><li>Cluster B</li><li>Cluster C</li></ul>
-            <div class="card warning"><h2>NOYAU</h2><p>Surchauffe imminente.</p></div>
-        </main>
-    </div>
-
-    <audio id="sfx-spawn" src="../../assets/oiia-oiia-sound.mp3" preload="auto"></audio>
+    <!-- sound loader -->
+    <audio id="sfx-coin" src="../../assets/retro-coin-1-236677.mp3" preload="auto"></audio>
+    <audio id="sfx-death" src="../../assets/retro-explode-2-236688.mp3" preload="auto"></audio>
+    <audio id="sfx-hit" src="../../assets/Retro Game Hit.mp3" preload="auto"></audio>
+    <audio id="sfx-hit-player" src="../../assets/retro-coin-2-236677.mp3" preload="auto"></audio>
+    <audio id="sfx-music" src="../../assets/80s-retro-beat-001-17882.mp3" preload="auto"></audio>
 
     <script src="laserGameLogic.js"></script>
 </body>
