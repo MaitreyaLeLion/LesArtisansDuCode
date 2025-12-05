@@ -1,5 +1,6 @@
 // const DOMAIN_NAME = "http://winux.io/";
-const DOMAIN_NAME = "http://localhost:3001/";
+// const DOMAIN_NAME = "http://localhost:3001/";
+const DOMAIN_NAME = "http://129.151.255.248:3001/";
 export class password_check {
     constructor(password) {
         this.password = password;
