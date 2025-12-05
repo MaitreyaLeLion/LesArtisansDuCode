@@ -19,9 +19,10 @@ export class WINUXWindow {
         // Create Iframe
         this.iframe = document.createElement('iframe') as HTMLIFrameElement;
         this.iframe.src = iframeSrc;
-        this.iframe.frameBorder = "0";
         this.iframe.style.width = "100%";
         this.iframe.style.height = "100%";
+        this.iframe.style.border = "none"; // Suppression de la bordure par défaut
+        this.iframe.style.background = "transparent"; // Important pour le glassmorphism
 
         // 1. Force absolute position for movement
         this.element.style.position = "absolute";
@@ -49,16 +50,24 @@ export class WINUXWindow {
 
         // --- Create Title Bar ---
         this.titleBar = document.createElement('div');
-        this.titleBar.style.height = "30px"; // Slightly taller for buttons
-        this.titleBar.style.backgroundColor = "#333";
-        this.titleBar.style.color = "white";
-        this.titleBar.style.display = "flex"; // Use Flexbox
+        // AJOUT : Classe CSS pour permettre le styling externe (style.css)
+        this.titleBar.classList.add('title-bar');
+
+        // STYLES DE BASE (Layout uniquement, pas de couleurs)
+        this.titleBar.style.height = "30px";
+        this.titleBar.style.display = "flex";
         this.titleBar.style.alignItems = "center";
         this.titleBar.style.justifyContent = "space-between";
         this.titleBar.style.padding = "0 10px";
         this.titleBar.style.boxSizing = "border-box";
         this.titleBar.style.fontFamily = "sans-serif";
         this.titleBar.style.fontSize = "14px";
+        this.titleBar.style.userSelect = "none"; // Empêche la sélection de texte pendant le drag
+
+        // SUPPRIMÉ : BackgroundColor et Color hardcodés pour laisser le CSS agir
+        // this.titleBar.style.backgroundColor = "#333";
+        // this.titleBar.style.color = "white";
+
         this.element.appendChild(this.titleBar);
 
         // 1. Title Text
@@ -68,7 +77,9 @@ export class WINUXWindow {
         this.titleText.style.overflow = "hidden";
         this.titleText.style.textOverflow = "ellipsis";
         this.titleText.style.marginRight = "10px";
-        this.titleText.style.pointerEvents = "none"; // Let clicks pass through to drag
+        this.titleText.style.pointerEvents = "none";
+        // On hérite la couleur du parent (défini par le CSS global)
+        this.titleText.style.color = "inherit";
         this.titleBar.appendChild(this.titleText);
 
         // 2. Window Controls Container
@@ -78,26 +89,33 @@ export class WINUXWindow {
         this.titleBar.appendChild(controls);
 
         // 3. Minimize Button
-        const minBtn = this.createButton("_", "#555");
+        // On utilise des couleurs semi-transparentes ou des classes si possible
+        const minBtn = this.createButton("_", "rgba(255, 255, 255, 0.2)");
         minBtn.onclick = (e) => {
-            e.stopPropagation(); // Prevent drag start
+            e.stopPropagation();
             this.toggleMinimize();
         };
         controls.appendChild(minBtn);
 
         // 4. Close Button
-        const closeBtn = this.createButton("X", "#c9302c");
+        const closeBtn = this.createButton("X", "rgba(255, 59, 48, 0.8)"); // Rouge style mac/winux
         closeBtn.onclick = (e) => {
-            e.stopPropagation(); // Prevent drag start
+            e.stopPropagation();
             this.close();
         };
         controls.appendChild(closeBtn);
 
         // --- Create Content Area ---
         this.contentArea = document.createElement('div');
-        this.contentArea.style.height = "calc(100% - 30px)"; // Subtract titlebar height
-        this.contentArea.style.backgroundColor = "white";
-        this.contentArea.style.overflow = "hidden"; // Hide overflow for iframe
+        this.contentArea.classList.add('window-content'); // Classe CSS ajoutée
+
+        this.contentArea.style.height = "calc(100% - 30px)";
+        this.contentArea.style.overflow = "hidden";
+
+        // SUPPRIMÉ : Fond blanc hardcodé.
+        // Important : on laisse transparent pour que le fond de .winux-window (glassmorphism) se voit.
+        this.contentArea.style.backgroundColor = "transparent";
+
         if(initialContent) this.contentArea.innerHTML = initialContent;
         this.element.appendChild(this.contentArea);
     }
@@ -115,46 +133,46 @@ export class WINUXWindow {
         btn.style.height = "20px";
         btn.style.fontSize = "12px";
         btn.style.cursor = "pointer";
-        btn.style.borderRadius = "3px";
+        btn.style.borderRadius = "50%"; // Plus joli en rond
         btn.style.display = "flex";
         btn.style.justifyContent = "center";
         btn.style.alignItems = "center";
+        btn.style.transition = "opacity 0.2s";
+
+        // Petit effet hover
+        btn.onmouseenter = () => btn.style.opacity = "0.8";
+        btn.onmouseleave = () => btn.style.opacity = "1";
+
         return btn;
     }
 
-    /**
-     * Tries to get the iframe title.
-     * NOTE: Will fail for external sites (CORS) and fallback to src.
-     */
     private initIframeLogic(src: string) {
         this.iframe.onload = () => {
             try {
-                // Try to read title from the page inside
                 const internalTitle = this.iframe.contentDocument?.title;
                 if (internalTitle) {
                     this.titleText.innerText = internalTitle;
                 } else {
-                    this.titleText.innerText = src;
+                    // Fallback propre : juste le nom du fichier sans le chemin
+                    const fileName = src.split('/').pop()?.split('?')[0] || src;
+                    this.titleText.innerText = fileName;
                 }
             } catch (e) {
-                // Security error (CORS) happens if domain is different
-                console.warn("Cannot read iframe title due to CORS (Cross-Origin). Using URL.");
-                this.titleText.innerText = "External: " + src;
+                console.warn("CORS: Cannot read iframe title.");
+                this.titleText.innerText = "Application";
             }
         };
     }
 
     private toggleMinimize() {
         if (this.isMinimized) {
-            // Restore
             this.contentArea.style.display = "block";
             this.element.style.height = this.preMinimizeHeight;
             this.isMinimized = false;
         } else {
-            // Minimize
             this.preMinimizeHeight = this.element.style.height;
             this.contentArea.style.display = "none";
-            this.element.style.height = "30px"; // Height of titlebar
+            this.element.style.height = "30px";
             this.isMinimized = true;
         }
     }
@@ -163,24 +181,28 @@ export class WINUXWindow {
         this.element.remove();
     }
 
-    // --- EXISTING LOGIC BELOW (Style, Drag, Resize) ---
-
     get innerHTML(): string {
         return this.contentArea.innerHTML;
     }
 
     private initStyle(): void {
         const currentStyle = this.element.getAttribute("style") || "";
-        this.element.setAttribute("style", currentStyle + options.DEFAULT_WINDOW_STYLE);
+        const currentIframeStyle = this.iframe.getAttribute("style") || "";
 
-        this.element.style.minWidth = "150px";
-        // Ensure we don't start smaller than titlebar
-        this.element.style.minHeight = "30px";
+        // On garde les options par défaut SI elles ne sont pas intrusives
+        // Mais on s'assure que flex direction est là
+        this.element.setAttribute("style", currentStyle);
+
+        // Styles critiques pour le layout
         this.element.style.display = "flex";
         this.element.style.flexDirection = "column";
 
+        // Dimensions minimales de sécurité
+        if (!this.element.style.minWidth) this.element.style.minWidth = "200px";
+        if (!this.element.style.minHeight) this.element.style.minHeight = "100px";
+
         if(options.DEFAULT_IFRAME_STYLE) {
-            this.iframe.setAttribute("style", options.DEFAULT_IFRAME_STYLE);
+            this.iframe.setAttribute("style", currentIframeStyle + options.DEFAULT_IFRAME_STYLE);
         }
     }
 
@@ -191,10 +213,9 @@ export class WINUXWindow {
         let initialLeft = 0;
         let initialTop = 0;
 
-        this.titleBar.style.cursor = "move";
+        this.titleBar.style.cursor = "default"; // Curseur standard sur la barre
 
         this.titleBar.addEventListener('mousedown', (e: MouseEvent) => {
-            // Check if we clicked a button inside titlebar, if so, don't drag
             if((e.target as HTMLElement).tagName === 'BUTTON') return;
 
             isDragging = true;
@@ -203,7 +224,8 @@ export class WINUXWindow {
             initialLeft = this.element.offsetLeft;
             initialTop = this.element.offsetTop;
 
-            this.element.style.zIndex = "1000";
+            // Le Z-index est géré par main.js au clic sur la fenêtre entière,
+            // mais on peut forcer ici aussi si besoin.
         });
 
         document.addEventListener('mousemove', (e: MouseEvent) => {
@@ -221,19 +243,20 @@ export class WINUXWindow {
     }
 
     private initResize(): void {
+        // La logique de resize reste identique
         const corners = ['nw', 'ne', 'sw', 'se'];
 
         corners.forEach(corner => {
             const resizer = document.createElement('div');
             resizer.classList.add('resizer', corner);
-
-            // Style
-            resizer.style.width = '10px';
-            resizer.style.height = '10px';
+            resizer.style.width = '15px'; // Zone un peu plus petite pour être discret
+            resizer.style.height = '15px';
             resizer.style.position = 'absolute';
             resizer.style.zIndex = '1001';
 
-            // Position
+            // Transparence pour ne pas voir les carrés de resize
+            resizer.style.opacity = '0';
+
             if (corner.includes('n')) resizer.style.top = '-5px';
             if (corner.includes('s')) resizer.style.bottom = '-5px';
             if (corner.includes('w')) resizer.style.left = '-5px';
@@ -251,9 +274,7 @@ export class WINUXWindow {
         let startX = 0, startY = 0, startW = 0, startH = 0, startLeft = 0, startTop = 0;
 
         resizer.addEventListener('mousedown', (e: MouseEvent) => {
-            // Cannot resize if minimized
             if(this.isMinimized) return;
-
             isResizing = true;
             e.stopPropagation();
             startX = e.clientX;
@@ -268,7 +289,6 @@ export class WINUXWindow {
         document.addEventListener('mousemove', (e: MouseEvent) => {
             if (!isResizing) return;
             e.preventDefault();
-
             const dx = e.clientX - startX;
             const dy = e.clientY - startY;
 

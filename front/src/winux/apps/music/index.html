@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>Lecteur Musique</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./../../../../assets/style/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Override pour l'iframe */
+        body { background: rgba(20, 20, 30, 0.95); overflow: hidden; height: 100vh; display: flex; flex-direction: column;
+            align-items: center;
+            justify-content: center; }
+        .music-player-popup { width: 100%; height: 100%; box-shadow: none; border: none; background: transparent; transform: none !important; }
+        .player-header { display: none; } /* Géré par la fenêtre WINUX */
+    </style>
+</head>
+<body>
+<div class="music-player-popup">
+    <div class="player-body">
+        <div class="now-playing">
+            <div class="album-art"><i class="fa-solid fa-music"></i></div>
+            <div class="track-info">
+                <h4 id="track-title">Aucune musique</h4>
+                <p id="track-artist">Sélectionnez une piste</p>
+            </div>
+        </div>
+        <div class="player-controls">
+            <div class="progress-container">
+                <span id="current-time">0:00</span>
+                <input type="range" id="progress-bar" value="0" min="0" max="100">
+                <span id="duration">0:00</span>
+            </div>
+            <div class="control-buttons">
+                <button id="music-prev-btn" class="control-btn"><i class="fa-solid fa-backward-step"></i></button>
+                <button id="music-play-pause-btn" class="control-btn main-btn"><i class="fa-solid fa-play"></i></button>
+                <button id="music-next-btn" class="control-btn"><i class="fa-solid fa-forward-step"></i></button>
+            </div>
+            <div class="volume-control">
+                <i class="fa-solid fa-volume-high"></i>
+                <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="1">
+            </div>
+        </div>
+        <div class="playlist-section">
+            <div class="playlist-header">
+                <h4>Playlist</h4>
+                <label for="add-music-input" class="add-music-btn"><i class="fa-solid fa-plus"></i> Ajouter</label>
+                <input type="file" id="add-music-input" accept="audio/*" multiple style="display: none;">
+            </div>
+            <ul class="playlist" id="playlist-list"></ul>
+        </div>
+    </div>
+</div>
+<script src="./script.js"></script>
+</body>
+</html>

@@ -1272,3 +1272,54 @@ button:hover {
     font-weight: 500;
     color: #f9d423;
 }
+
+.winux-window {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    transition: transform 0.1s, box-shadow 0.2s;
+    background-color: var(--bg-color);
+}
+
+.winux-window:active {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+}
+
+/* Style: Standard (Jeux, Shutdown, Snake, Laser) */
+.winux-window.style-standard {
+    background: var(--bg-color);
+    border: 2px solid var(--accent-color);
+    border-radius: var(--border-radius);
+}
+
+/* Style: Settings */
+.winux-window.style-settings {
+    background: var(--bg-color);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Style: Music */
+.winux-window.style-music {
+    background: rgba(20, 20, 30, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Style: Recycling */
+.winux-window.style-recycling {
+    background: #ffffff;
+    border-radius: 30px;
+    border: none;
+}
+
+/* Ajustement de la barre de titre interne générée par WINUXWindow */
+.winux-window .title-bar {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    min-height: 30px;
+}

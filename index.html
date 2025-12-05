@@ -3,377 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WINUX</title>
-    <link rel="stylesheet" href="./front/assets/style/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>WINUX OS</title>
+    <link rel="stylesheet" href="./front/assets/style/style.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="background"></div>
-    
-    <!-- Top Bar -->
-    <div class="bar">
+<div class="background"></div>
 
-        
-        <div class="center-modules">
-            <div class="module" id="clock-module">
-                <span id="clock">12:00</span>
-            </div>
-        </div>
-
-        <div class="right-modules">
-            <div class="module" id="wifi-module">
-                <i class="fa-solid fa-wifi"></i>
-            </div>
-            <div class="module" id="battery-module">
-                <i class="fa-solid fa-battery-three-quarters"></i>
-                <span id="battery-level">85%</span>
-            </div>
-            <div class="module" id="shutdown-module" title="Éteindre">
-                <i class="fa-solid fa-power-off"></i>
-            </div>
+<div class="bar">
+    <div class="center-modules">
+        <div class="module"><span id="clock">12:00</span></div>
+    </div>
+    <div class="right-modules">
+        <div class="module"><i class="fa-solid fa-wifi"></i></div>
+        <div class="module"><i class="fa-solid fa-battery-three-quarters"></i></div>
+        <div class="module" id="shutdown-module" title="Éteindre">
+            <i class="fa-solid fa-power-off"></i>
         </div>
     </div>
+</div>
 
-    <!-- Desktop Area -->
-    <div class="desktop">
-        <div class="desktop-icon" id="recyclage-module">
-            <div class="icon-container">
-                <img src="./front/assets/images/recyclage.png" alt="Recyclage" class="desktop-img">
-                <i class="fa-solid fa-circle-info info-icon-desktop"></i>
-            </div>
-            <span class="icon-label">Recyclage</span>
+<div class="desktop">
+    <div class="desktop-icon" id="recyclage-module">
+        <div class="icon-container">
+            <img src="./front/assets/images/recyclage.png" alt="Recyclage" class="desktop-img">
+        </div>
+        <span class="icon-label">Recyclage</span>
+    </div>
+</div>
+
+<div class="dock-container">
+    <div class="dock">
+        <div class="dock-item" title="Musique">
+            <i class="fa-solid fa-music"></i>
+        </div>
+        <div class="dock-item" title="Jeux" id="games-dock-item">
+            <i class="fa-solid fa-gamepad"></i>
+        </div>
+        <div class="dock-item" title="Paramètres" id="settings-dock-item">
+            <i class="fa-solid fa-gear"></i>
         </div>
     </div>
+</div>
 
-    <!-- Dock -->
-    <div class="dock-container">
-        <div class="dock">
-            <div class="dock-item" title="Musique">
-                <i class="fa-solid fa-music"></i>
-            </div>
-            <div class="dock-item" title="Jeux" id="games-dock-item">
-                <i class="fa-solid fa-gamepad"></i>
-            </div>
-            <div class="dock-item" title="Paramètres" id="settings-dock-item">
-                <i class="fa-solid fa-gear"></i>
-            </div>
-        </div>
+<div class="overlay active" id="startup-overlay">
+    <div class="startup-content">
+        <button id="start-btn"><i class="fa-solid fa-power-off"></i></button>
+        <p>Démarrer le système</p>
     </div>
+</div>
 
-    <!-- Shutdown Popup -->
-    <div class="overlay" id="shutdown-overlay">
-        <div class="standard-popup">
-            <div class="popup-header">
-                <i class="fa-solid fa-power-off"></i>
-                <h3>Éteindre</h3>
-            </div>
-            <div class="popup-body">
-                <p>Voulez-vous vraiment éteindre la machine ?</p>
-                <div class="button-group">
-                    <button id="cancel-shutdown-btn" class="secondary-btn">Annuler</button>
-                    <button id="confirm-shutdown-btn" class="danger-btn">Éteindre</button>
-                </div>
-            </div>
-        </div>
-    </div>
+<script type="module">
+    import { WINUXWindow } from './front/src/winux/components/window.js';
 
-    <!-- Recycling Info Popup -->
-    <div class="overlay" id="recycling-overlay">
-        <div class="carousel-popup">
-            <div class="popup-header">
-                <i class="fa-solid fa-recycle"></i>
-                <h3>Pourquoi Recycler ?</h3>
-            </div>
-            <div class="popup-body carousel-body no-padding">
-                <div class="carousel-container">
-                    <!-- Slide 1: Reduce -->
-                    <div class="carousel-slide active" id="slide-1">
-                        <div class="slide-image-container">
-                            <img src="./front/assets/images/reduce.png" alt="Reduce" class="slide-img">
-                        </div>
-                        <div class="slide-content">
-                            <h3>REDUCE</h3>
-                            <p>Minimisez votre impact numérique. WINUX optimise les ressources pour que vous n'ayez pas à changer de matériel.</p>
-                        </div>
-                    </div>
 
-                    <!-- Slide 2: Recycle -->
-                    <div class="carousel-slide" id="slide-2">
-                        <div class="slide-image-container">
-                            <img src="./front/assets/images/recycle.png" alt="Recycle" class="slide-img">
-                        </div>
-                        <div class="slide-content">
-                            <h3>RECYCLE</h3>
-                            <p>Donnez une seconde vie à vos composants. Le recyclage intelligent commence par une utilisation prolongée.</p>
-                        </div>
-                    </div>
+    // --- 1. CONFIGURATION DES APPLICATIONS (Registry) ---
+    // Définit les propriétés de chaque fenêtre : URL, Dimensions, Position, Style CSS
+    const APPS = {
+        music: {
+            title: 'Lecteur Musique',
+            url: './front/src/winux/apps/music/index.html',
+            className: 'style-music',
+            // Dimensions exactes tirées de music.jpg (400x473)
+            width: '400px',
+            height: '473px',
+            minWidth: '350px',
+            minHeight: '400px',
+            x: 'center',
+            y: 'center'
+        },
+        settings: {
+            title: 'Paramètres',
+            url: './front/src/winux/apps/settings/index.html',
+            className: 'style-settings',
+            // Dimensions exactes tirées de settings.jpg (700x500)
+            width: '700px',
+            height: '600px',
+            minWidth: '700px',
+            minHeight: '600px',
+            x: 'center',
+            y: 'center'
+        },
+        recycling: {
+            title: 'Recyclage',
+            url: './front/src/winux/apps/recycling/index.html',
+            className: 'style-recycling',
+            // Basé sur recyclage.jpg (Slide 400x460 + contrôles bas)
+            width: '400px',
+            height: '600px',
+            minWidth: '400px',
+            minHeight: '500px',
+            x: 'center',
+            y: 'center'
+        },
+        games: {
+            title: 'Arcade',
+            url: './front/src/winux/apps/games/index.html',
+            className: 'style-standard',
+            // Basé sur games.jpg (CSS width: 500px)
+            width: '500px',
+            height: '350px', // Ajusté pour coller au visuel compact
+            minWidth: '400px',
+            minHeight: '300px',
+            x: 'center',
+            y: 'center'
+        },
+        lasergame: {
+            title: 'Laser Game',
+            url: './front/src/winux/apps/lasergame/index.html',
+            className: 'style-standard',
+            // Visible dans le DOM sur music.jpg (900x600)
+            width: '900px',
+            height: '600px',
+            minWidth: '800px',
+            minHeight: '500px',
+            x: 'center',
+            y: 'center'
+        },
+        snake: {
+            title: 'Snake',
+            url: './front/src/winux/apps/snake/index.html',
+            className: 'style-standard',
+            // Canvas 380x380 + Scoreboard
+            width: '420px',
+            height: '480px',
+            minWidth: '420px',
+            minHeight: '480px',
+            x: 'center',
+            y: 'center'
+        },
+        shutdown: {
+            title: 'Arrêt système',
+            url: './front/src/winux/apps/shutdown/index.html',
+            className: 'style-standard',
+            width: '320px',
+            height: '220px',
+            minWidth: '300px',
+            minHeight: '200px',
+            x: 'center',
+            y: 'center'
+        }
+    };
 
-                    <!-- Slide 3: Reuse -->
-                    <div class="carousel-slide" id="slide-3">
-                        <div class="slide-image-container">
-                            <img src="./front/assets/images/reuse.png" alt="Reuse" class="slide-img">
-                        </div>
-                        <div class="slide-content">
-                            <h3>REUSE</h3>
-                            <p>Réutilisez, réinventez. Avec WINUX, votre vieux PC devient une machine de guerre moderne.</p>
-                        </div>
-                    </div>
-                </div>
+    // --- 2. SYSTEM CORE (Horloge) ---
+    function updateClock() {
+        const clockElement = document.getElementById("clock");
+        if (!clockElement) return;
+        const now = new Date();
+        const dateString = now.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+        const timeString = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        clockElement.textContent = `${dateString} ${timeString}`;
+    }
 
-                <div class="carousel-controls">
-                    <div class="pagination-dots">
-                        <span class="dot active" data-slide="0"></span>
-                        <span class="dot" data-slide="1"></span>
-                        <span class="dot" data-slide="2"></span>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="skip-btn" id="skip-btn">Skip</button>
-                        <button class="next-btn" id="next-btn">Next</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    // --- 3. WINDOW MANAGER (Gestionnaire de fenêtres) ---
+    // Attaché à window pour être accessible depuis le HTML (onclick="window.spawnWindow(...)")
+    window.spawnWindow = function(appKey) {
+        const app = APPS[appKey];
+        if (!app) return console.error(`App "${appKey}" introuvable dans la configuration.`);
 
-    <!-- Settings Popup -->
-    <div class="overlay" id="settings-overlay">
-        <div class="settings-popup">
-            <div class="settings-sidebar">
-                <div class="settings-user-profile">
-                    <div class="profile-avatar">
-                        <i class="fa-solid fa-circle-user"></i>
-                    </div>
-                    <div class="profile-info">
-                        <span class="username">test</span>
-                        <span class="account-type">Compte WINUX</span>
-                    </div>
-                </div>
-                <div class="sidebar-item" data-tab="general">
-                    <i class="fa-solid fa-circle-info"></i>
-                    <span>Général</span>
-                </div>
-                <div class="sidebar-item active" data-tab="wallpaper">
-                    <i class="fa-solid fa-image"></i>
-                    <span>Fond d'écran</span>
-                </div>
-                <div class="settings-actions">
-                    <button id="premium-btn" class="premium-btn">
-                        <i class="fa-solid fa-crown"></i> Passer Premium
-                    </button>
-                </div>
-                <!-- Add more settings items here if needed -->
-            </div>
-            <div class="settings-content">
-                
-                <!-- Wallpaper Section -->
-                <div id="settings-section-wallpaper" class="settings-section active">
-                    <div class="settings-header">
-                        <h3>Fond d'écran</h3>
-                        <button class="close-btn close-settings-btn"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                    <div class="wallpaper-grid">
-                        <div class="wallpaper-item" data-wallpaper="default">
-                            <div class="wallpaper-preview" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop');"></div>
-                            <span>Défaut</span>
-                        </div>
-                        <div class="wallpaper-item" data-wallpaper="france">
-                            <div class="wallpaper-preview" style="background-image: url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop');"></div>
-                            <span>France</span>
-                        </div>
-                        <div class="wallpaper-item" data-wallpaper="it">
-                            <div class="wallpaper-preview" style="background-image: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop');"></div>
-                            <span>Informatique</span>
-                        </div>
-                        <div class="wallpaper-item" data-wallpaper="universe">
-                            <div class="wallpaper-preview" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');"></div>
-                            <span>Univers</span>
-                        </div>
-                        <div class="wallpaper-item" data-wallpaper="nature">
-                            <div class="wallpaper-preview" style="background-image: url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2074&auto=format&fit=crop');"></div>
-                            <span>Nature</span>
-                        </div>
-                    </div>
-                    <div class="settings-actions">
-                        <button id="reset-wallpaper-btn" class="secondary-btn">Rétablir par défaut</button>
-                    </div>
-                </div>
+        // Génération d'un ID unique pour permettre plusieurs instances
+        const winId = `win-${appKey}-${Date.now()}`;
+        const desktop = document.querySelector('.desktop');
 
-                <!-- General Section -->
-                <div id="settings-section-general" class="settings-section" style="display: none;">
-                    <div class="settings-header">
-                        <h3>Général</h3>
-                        <button class="close-btn close-settings-btn"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                    <div class="general-info-container">
-                        <div class="info-group">
-                            <label>Système d'exploitation</label>
-                            <span>WINUX OS 1.0 (Beta)</span>
-                        </div>
-                        <div class="info-group">
-                            <label>Processeur</label>
-                            <span>Intel Core Pentium</span>
-                        </div>
-                        <div class="info-group">
-                            <label>Mémoire RAM</label>
-                            <span>2 Go DDR2</span>
-                        </div>
-                        <div class="info-group">
-                            <label>Carte Graphique</label>
-                            <span>Intel HD Graphics 3000</span>
-                        </div>
-                        <div class="info-group">
-                            <label>Stockage</label>
-                            <span>256 GO HDD</span>
-                        </div>
-                        <div class="info-group">
-                            <label>Version du noyau</label>
-                            <span>Linux 6.5.0-generic</span>
-                        </div>
-                    </div>
-                </div>
+        // A. Création du conteneur DOM
+        const container = document.createElement('div');
+        container.id = winId;
 
-            </div>
-        </div>
-    </div>
+        // B. Application des classes CSS (Base + Spécifique App)
+        container.classList.add('winux-window'); // Classe de base (position absolute, shadow, etc.)
+        if (app.className) {
+            container.classList.add(app.className); // Ex: style-music (backdrop-filter, border-radius specific)
+        }
 
-    <!-- Startup Overlay -->
-    <div class="overlay active" id="startup-overlay">
-        <div class="startup-content">
-            <button id="start-btn">
-                <i class="fa-solid fa-power-off"></i>
-            </button>
-            <p>Démarrer le système</p>
-        </div>
-    </div>
+        // C. Application des Dimensions (Configuration JS prioritaire)
+        container.style.width = app.width;
+        container.style.height = app.height;
+        if (app.minWidth) container.style.minWidth = app.minWidth;
+        if (app.minHeight) container.style.minHeight = app.minHeight;
 
-    <!-- Premium Overlay -->
-    <div class="overlay" id="premium-overlay">
-        <div class="standard-popup premium-popup">
-            <div class="popup-header">
-                <i class="fa-solid fa-crown"></i>
-                <h3>WINUX Premium</h3>
-                <button class="close-btn" id="close-premium-btn"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="popup-body">
-                <ul class="premium-features">
-                    <li><i class="fa-solid fa-check"></i> Fonctionnalités exclusives</li>
-                    <li><i class="fa-solid fa-check"></i> Support prioritaire 24/7</li>
-                    <li><i class="fa-solid fa-check"></i> Accès anticipé aux bêtas</li>
-                    <li><i class="fa-solid fa-coins"></i> 50% de don à GreenPeace</li>
-                </ul>
-                <div class="price-tag">19,99 €</div>
-                <button class="premium-action-btn">Acheter maintenant</button>
-            </div>
-        </div>
-    </div>
+        // D. Calcul de la Position
+        let top, left;
 
-    <!-- Music Player Overlay -->
-    <div class="overlay" id="music-player-overlay">
-        <div class="music-player-popup">
-            <div class="player-header">
-                <h3>Lecteur Musique</h3>
-                <button class="close-btn" id="close-player-btn"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="player-body">
-                <div class="now-playing">
-                    <div class="album-art">
-                        <i class="fa-solid fa-music"></i>
-                    </div>
-                    <div class="track-info">
-                        <h4 id="track-title">Aucune musique</h4>
-                        <p id="track-artist">Sélectionnez une piste</p>
-                    </div>
-                </div>
-                
-                <div class="player-controls">
-                    <div class="progress-container">
-                        <span id="current-time">0:00</span>
-                        <input type="range" id="progress-bar" value="0" min="0" max="100">
-                        <span id="duration">0:00</span>
-                    </div>
-                    
-                    <div class="control-buttons">
-                        <button id="music-prev-btn" class="control-btn"><i class="fa-solid fa-backward-step"></i></button>
-                        <button id="music-play-pause-btn" class="control-btn main-btn"><i class="fa-solid fa-play"></i></button>
-                        <button id="music-next-btn" class="control-btn"><i class="fa-solid fa-forward-step"></i></button>
-                    </div>
-                    
-                    <div class="volume-control">
-                        <i class="fa-solid fa-volume-high"></i>
-                        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="1">
-                    </div>
-                </div>
+        if (app.x === 'center') {
+            // Centrage dynamique au milieu de l'écran
+            const wVal = parseInt(app.width) || 400;
+            const hVal = parseInt(app.height) || 400;
+            left = (window.innerWidth / 2) - (wVal / 2);
+            top = (window.innerHeight / 2) - (hVal / 2);
+        } else {
+            // Position fixe + variation aléatoire (Cascading)
+            const offset = Math.floor(Math.random() * 30);
+            left = parseInt(app.x) + offset;
+            top = parseInt(app.y) + offset;
+        }
 
-                <div class="playlist-section">
-                    <div class="playlist-header">
-                        <h4>Playlist</h4>
-                        <label for="add-music-input" class="add-music-btn">
-                            <i class="fa-solid fa-plus"></i> Ajouter
-                        </label>
-                        <input type="file" id="add-music-input" accept="audio/*" multiple style="display: none;">
-                    </div>
-                    <ul class="playlist" id="playlist-list">
-                        <!-- Playlist items will be added here dynamically -->
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+        // Sécurité : Empêcher la fenêtre de spawn hors écran (en haut/gauche)
+        if (left < 0) left = 20;
+        if (top < 40) top = 50; // 40px est la hauteur approx de la barre du haut
 
-    <!-- Games Overlay -->
-    <div class="overlay" id="games-overlay">
-        <div class="standard-popup games-popup">
-            <div class="popup-header">
-                <i class="fa-solid fa-gamepad"></i>
-                <h3>Jeux</h3>
-                <button class="close-btn" id="close-games-btn"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="popup-body">
-                <div class="games-list">
-                    <div class="game-item">
-                        <div class="game-icon">
-                            <i class="fa-solid fa-gun"></i>
-                        </div>
-                        <div class="game-info">
-                            <h4>Laser Game</h4>
-                            <p>Jeu de tir laser</p>
-                        </div>
-                        <button class="play-btn" id="play-lasergame-btn">Jouer</button>
-                    </div>
-                    <div class="game-item">
-                        <div class="game-icon">
-                            <i class="fa-solid fa-staff-snake"></i>
-                        </div>
-                        <div class="game-info">
-                            <h4>Snake</h4>
-                            <p>Le classique Snake</p>
-                        </div>
-                        <button class="play-btn">Jouer</button>
-                    </div>
-                </div>
-                <div class="coming-soon-message">
-                    <i class="fa-solid fa-clock"></i>
-                    <p>D'autres jeux sortiront bientôt !</p>
-                </div>
-            </div>
-        </div>
-    </div>
+        container.style.position = 'absolute';
+        container.style.top = `${top}px`;
+        container.style.left = `${left}px`;
 
-    <!-- Laser Game Overlay -->
-    <div class="overlay" id="lasergame-overlay">
-        <div class="standard-popup lasergame-popup" style="width: 900px; height: 600px; max-width: 95vw; max-height: 95vh; display: flex; flex-direction: column;">
-            <div class="popup-header">
-                <i class="fa-solid fa-gun"></i>
-                <h3>Laser Game</h3>
-                <button class="close-btn" id="close-lasergame-btn"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="popup-body" style="flex: 1; padding: 0; overflow: hidden; background: #000;">
-                <iframe id="lasergame-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
-            </div>
-        </div>
-    </div>
+        // E. Gestion du Z-Index (Mise au premier plan automatique)
+        const bringToFront = () => {
+            const allWindows = document.querySelectorAll('.winux-window');
+            let maxZ = 100;
+            allWindows.forEach(w => {
+                const z = parseInt(window.getComputedStyle(w).zIndex) || 100;
+                if (z > maxZ) maxZ = z;
+            });
+            container.style.zIndex = maxZ + 1;
+        };
 
-    <!-- Linking the compiled JS file -->
-    <script src="./front/assets/scripts/script.js"></script>
+        bringToFront(); // Au spawn
+
+        // F. Injection dans le DOM
+        desktop.appendChild(container);
+
+        // G. Initialisation de la logique Fenêtre (Drag & Drop, Resize via WINUXWindow)
+        new WINUXWindow(winId, app.url);
+
+        // H. Event Listener : Mettre au premier plan au clic
+        container.addEventListener('mousedown', bringToFront);
+    };
+
+    // --- 4. INITIALISATION (Boot) ---
+    document.addEventListener("DOMContentLoaded", () => {
+        // Démarrer l'horloge
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Listeners du Dock (Barre du bas)
+        const musicIcon = document.querySelector('[title="Musique"]');
+        if(musicIcon) musicIcon.addEventListener('click', () => window.spawnWindow('music'));
+
+        const gamesIcon = document.getElementById('games-dock-item');
+        if(gamesIcon) gamesIcon.addEventListener('click', () => window.spawnWindow('games'));
+
+        const settingsIcon = document.getElementById('settings-dock-item');
+        if(settingsIcon) settingsIcon.addEventListener('click', () => window.spawnWindow('settings'));
+
+        // Listeners du Bureau
+        const recycleIcon = document.getElementById("recyclage-module");
+        if(recycleIcon) recycleIcon.addEventListener('click', () => window.spawnWindow('recycling'));
+
+        // Listeners de la Barre du haut
+        const shutdownBtn = document.getElementById("shutdown-module");
+        if(shutdownBtn) shutdownBtn.addEventListener('click', () => window.spawnWindow('shutdown'));
+
+        // Gestion de l'écran de démarrage (Login/Startup Overlay)
+        const startupOverlay = document.getElementById("startup-overlay");
+        const startBtn = document.getElementById("start-btn");
+        if (startBtn && startupOverlay) {
+            startBtn.addEventListener("click", () => {
+                startupOverlay.style.opacity = "0";
+                setTimeout(() => startupOverlay.remove(), 1000);
+            });
+        }
+    });
+</script>
 </body>
 </html>
