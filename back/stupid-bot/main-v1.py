@@ -1,32 +1,54 @@
-import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from sentence_transformers import SentenceTransformer
+import json
 
-model_name = "distilgpt2"  # petit, rapide, local
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained(model_name)
+import sqlite3
+import numpy as np
 
-def stupid_reply(prompt):
-    # On encode le prompt
-    inputs = tokenizer(prompt, return_tensors="pt")
+# ======DATABASE SETUP======
+conn = sqlite3.connect("../express-ts/database.db")
+cursor = conn.cursor()
 
-    # On génère une phrase volontairement absurde
-    output = model.generate(
-        **inputs,
-        max_length=40,
-        do_sample=True,
-        temperature=2.0,   # très chaotique
-        top_k=3,           # très restrictif -> casse le sens
-        repetition_penalty=0.1,  # favorise l'absurde
-    )
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS embeddings (
+    sentence TEXT,
+    vector BLOB
+)
+""")
 
-    text = tokenizer.decode(output[0], skip_special_tokens=True)
 
-    # On enlève la partie du prompt pour ne garder QUE la réponse
-    return text[len(prompt):].strip()
+# =====GETTING ALL QUESTIONS====
+with open("data.json", "r", encoding="utf-8") as f:
+    data = json.load(f)
 
-print("Chatbot stupide (GPT-2 saboté)")
-while True:
-    msg = input("> ")
-    if msg.lower() in ["quit", "exit"]:
-        break
-    print(stupid_reply(msg))
+all_questions = []
+
+for item in data:
+    all_questions.extend(item["user_questions"])
+
+# print(all_questions)
+
+
+# ======GETTING VETORS=======
+model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+embeddings = model.encode(all_questions)
+# print(embeddings)
+
+
+#======INSERT INTO DB=======
+for i in range(len(embeddings)):
+    vector_blob = embeddings[i].tobytes()
+    cursor.execute(
+    "INSERT INTO embeddings (sentence, vector) VALUES (?, ?)",
+    (all_questions[i], vector_blob)
+)
+    
+# ======LOADING A VECTOR======
+
+cursor.execute("SELECT vector FROM embeddings WHERE rowid=1")
+vector_blob = cursor.fetchone()[0]
+embedding = np.frombuffer(vector_blob, dtype=np.float32)
+
+print(embedding)
+    
+conn.commit()
+conn.close()
