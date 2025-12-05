@@ -90,7 +90,7 @@ export class password_check {
         const IP = data.IP;
         // const regex =
         // 	/\b(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\b/;
-        return this.result(this.password.includes(IP), "Le mot de passe doit contenir une adresse IP valide (format X.X.X.X de 0 à 255).");
+        return this.result(this.password.includes(IP), "Le mot de passe doit contenir votre adresse IP publique (format X.X.X.X de 0 à 255).");
     }
 }
 // module.exports = password_check;
