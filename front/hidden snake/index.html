@@ -8,6 +8,7 @@
 </head>
 <body>
 <div class="scene">
+  <!-- Zone de jeu -->
   <div class="frame">
     <div class="river"></div>
     <div class="neon">
@@ -15,6 +16,7 @@
     </div>
   </div>
 
+  <!-- Panel de droite -->
   <div class="panel">
     <h1>Hidden Snake</h1>
     <div class="score">Score : <span id="score">0</span></div>
@@ -24,26 +26,28 @@
       <button id="resetBtn">Réinitialiser</button>
     </div>
     <div class="hint">Touches : flèches ou ZQSD. Mange les rats.</div>
+
+    <!-- Overlay mot de passe sous le panel -->
     <div id="passwordOverlay" class="game-over under-panel">
-  <div class="panel">
-    <h2>BRAVO !</h2>
-    <p>Le mot de passe est maintenant <strong>1234</strong></p>
-    <div class="btns">
-      <button id="closePasswordBtn">Fermer</button>
-    </div>
-  </div>
-</div>
-  </div>
-        <!-- Game over overlay inside the neon frame so it centers well -->
-      <div id="gameOver" class="game-over">
-        <div class="panel">
-          <h2>GAME OVER</h2>
-          <div class="btns">
-            <button id="menuBtn">Rejouer</button>
-          </div>
+      <div class="panel">
+        <h2>BRAVO !</h2>
+        <p>Le mot de passe est maintenant <strong>1234</strong></p>
+        <div class="btns">
+          <button id="closePasswordBtn">Fermer</button>
         </div>
       </div>
+    </div>
+  </div>
 
+  <!-- Overlay Game Over centré sur le jeu -->
+  <div id="gameOver" class="game-over">
+    <div class="panel">
+      <h2>GAME OVER</h2>
+      <div class="btns">
+        <button id="menuBtn">Rejouer</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="script.js"></script>
