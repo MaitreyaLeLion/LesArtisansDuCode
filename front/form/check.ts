@@ -36,7 +36,7 @@ export class password_check {
 
 		return this.result(
 			true,
-			"Votre mot de passe est valide ! Cependant veuillez entrer le mot de passe fourni lorsque vous arrivez au niveau 20 dans le jeu snake."
+			"Votre mot de passe est valide ! Cependant veuillez entrer le mot de passe fourni lorsque vous arrivez au niveau 30 dans le jeu snake."
 		);
 	}
 
