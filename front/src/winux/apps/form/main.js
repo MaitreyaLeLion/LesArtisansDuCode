@@ -1,4 +1,4 @@
-import { password_check } from "./check.js"; // ton checker déjà existant
+import { password_check } from "./check"; // ton checker déjà existant
 const formButton = document.getElementById("submitBtn");
 const message = document.getElementById("message");
 const passwordInput = document.getElementById("password");

@@ -27,7 +27,7 @@ export class password_check {
             if (!resolvedCheck.success)
                 return resolvedCheck;
         }
-        return this.result(true, "Votre mot de passe est valide ! Cependant veuillez entrer le mot de passe fourni lorsque vous arrivez au niveau 20 dans le jeu snake.");
+        return this.result(true, "Votre mot de passe est valide ! Cependant veuillez entrer le mot de passe fourni lorsque vous arrivez au niveau 30 dans le jeu snake.");
     }
     async finishedSnake() {
         if (this.password == "1234") {
