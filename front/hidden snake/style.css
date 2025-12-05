@@ -1,203 +1,197 @@
-  :root{
-    --board-size: 20; /* nombre de cases par côté */
-    --cell-size: 28px; /* taille d'une case */
-  }
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Arial;color:#fff}
-  /* Fond synthwave : radial glows + quadrillage rose fluo */
-  body{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:
-      radial-gradient(1200px 600px at 10% 10%, rgba(255,60,172,0.12) 0%, rgba(255,60,172,0.03) 8%, transparent 20%),
-      linear-gradient(180deg,#0b0423 0%, #160528 50%, #071022 100%);
-    overflow:hidden;
-  }
+:root{
+  --board-size: 20;
+  --cell-size: 28px;
+}
 
-  /* overlayed pink neon grid across the whole page */
-  body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    background-image:
-      linear-gradient(0deg, rgba(255,20,150,0.14) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,20,150,0.14) 1px, transparent 1px);
-    background-size: 36px 36px;
-    mix-blend-mode: overlay;
-    opacity: 0.95;
-    z-index:0;
-  }
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Inter, system-ui, Arial, sans-serif;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(1200px 600px at 10% 10%, rgba(255,60,172,0.12) 0%, rgba(255,60,172,0.03) 8%, transparent 20%),
+    linear-gradient(180deg,#0b0423 0%, #160528 50%, #071022 100%);
+  overflow: hidden;
+}
 
-  .scene{
-    display:grid;
-    grid-template-columns: 1fr 420px;
-    gap:28px;
-    align-items:start;
-    position:relative;
-    z-index:1; /* above page grid */
-  }
+body::before {
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(0deg, rgba(255,20,150,0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,20,150,0.14) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mix-blend-mode: overlay;
+  opacity: 0.95;
+  z-index: 0;
+}
 
-  /* cadre synthwave + rivière */
-  .frame{
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-    border-radius:18px;
-    padding:20px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
-    position:relative;
-    min-width: calc(var(--board-size) * var(--cell-size) + 2*24px);
-    max-width: calc(var(--board-size) * var(--cell-size) + 2*24px);
-    overflow:visible;
-  }
+.scene {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 28px;
+  align-items: start;
+  position: relative;
+  z-index: 1;
+}
 
-  .river {
-    position: absolute;
-    inset: -22px;
-    border-radius: 26px;
-    background: linear-gradient(180deg,#0b2a3a 0%, #07394c 60%, #03121a 100%);
-    filter: blur(6px) saturate(1.2);
-    z-index: -2;
-  }
-  .river:after{
-    content:"";
-    position:absolute;
-    inset:6px;
-    border-radius:20px;
-    background:
-      repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0 6px, transparent 6px 12px);
-    mix-blend-mode: overlay;
-  }
+/* Cadre + rivière */
+.frame {
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  position: relative;
+  min-width: calc(var(--board-size) * var(--cell-size) + 48px);
+  max-width: calc(var(--board-size) * var(--cell-size) + 48px);
+  overflow: visible;
+}
 
-  /* bord néon autour du plateau */
+.river {
+  position: absolute;
+  inset: -22px;
+  border-radius: 26px;
+  background: linear-gradient(180deg,#0b2a3a 0%, #07394c 60%, #03121a 100%);
+  filter: blur(6px) saturate(1.2);
+  z-index: -2;
+}
+
+.river:after {
+  content:"";
+  position: absolute;
+  inset: 6px;
+  border-radius: 20px;
+  background: repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0 6px, transparent 6px 12px);
+  mix-blend-mode: overlay;
+}
+
+/* Neon border */
 .neon {
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 18px;
-  border-radius:12px;
+  border-radius: 12px;
   background: linear-gradient(140deg, rgba(255,0,150,0.06), rgba(0,200,255,0.03));
-  box-shadow:
-    0 0 22px rgba(255,0,150,0.06),
-    inset 0 1px 0 rgba(255,255,255,0.02);
+  box-shadow: 0 0 22px rgba(255,0,150,0.06), inset 0 1px 0 rgba(255,255,255,0.02);
   position: relative;
 }
 
-  /* zone de jeu (canvas) : on met aussi un quadrillage propre sur le canvas via CSS pour effet néon */
-  #gameCanvas {
-    image-rendering: pixelated;
-    display:block;
-    width: calc(var(--board-size) * var(--cell-size));
-    height: calc(var(--board-size) * var(--cell-size));
-    background:
-      linear-gradient(180deg, rgba(10,6,20,0.6), rgba(6,3,10,0.6));
-    border-radius: 8px;
-    box-shadow: 0 6px 30px rgba(0,0,0,0.6), 0 0 40px rgba(255,0,150,0.06);
-    position:relative;
-  }
-
-  /* Neon grid overlay on canvas edges (soft) */
-  #gameCanvas::after{
-    content:"";
-    position:absolute;
-  }
-
-  /* GAME OVER overlay styled synthwave (hidden by default) */
-.game-over {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%,-50%);
-    display: none; /* caché par défaut */
-    text-align: center;
-    z-index: 50;
-    pointer-events: auto; /* obligatoire pour que les boutons soient cliquables */
-}
-
-  .game-over.active { display:block; pointer-events:auto; }
-
-  .game-over .panel {
-    background: linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.4));
-    border: 2px solid rgba(255,110,199,0.12);
-    border-radius: 12px;
-    padding: 18px 28px;
-    backdrop-filter: blur(4px);
-    box-shadow: 0 10px 40px rgba(255,0,150,0.08);
-  }
-
-  .game-over h2{
-    margin:0;
-    font-size: 36px;
-    letter-spacing: 6px;
-    color: #ff6ec7;
-    text-shadow: 0 0 18px rgba(255,110,199,0.9), 0 0 36px rgba(100,0,255,0.25);
-    font-weight:800;
-    transform: translateY(-6px);
-  }
-  .game-over p{
-    margin: 8px 0 0 0;
-    font-size: 14px;
-    color: #f6e6ff;
-    opacity: 0.9;
-  }
-  .game-over .btns{
-    margin-top:12px;
-    display:flex;
-    gap:10px;
-    justify-content:center;
-  }
-  .game-over button{
-    padding:10px 14px;
-    border-radius:8px;
-    border:none;
-    cursor:pointer;
-    font-weight:700;
-    color:white;
-    background: linear-gradient(180deg,#ff4db4,#9b00ff);
-    box-shadow: 0 6px 12px rgba(155,0,255,0.16);
-  }
-#passwordOverlay.under-panel {
-  position: relative; /* reste dans le flux de la colonne */
-  transform: none;    /* pas de centrage absolu */
-  display: none;      /* caché par défaut */
-  margin-top: 100px;   /* espace sous les boutons */
-}
-#passwordOverlay.under-panel.active {
+#gameCanvas {
+  image-rendering: pixelated;
   display: block;
+  width: calc(var(--board-size) * var(--cell-size));
+  height: calc(var(--board-size) * var(--cell-size));
+  background: linear-gradient(180deg, rgba(10,6,20,0.6), rgba(6,3,10,0.6));
+  border-radius: 8px;
+  box-shadow: 0 6px 30px rgba(0,0,0,0.6), 0 0 40px rgba(255,0,150,0.06);
+  position: relative;
 }
 
-  /* UI à droite */
-  .panel{
-    width:380px;
-    padding:18px;
-    border-radius:16px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
-  }
-  h1{font-size:20px;margin:0 0 12px 0;color:#ffd3ff}
-  .info{font-size:14px;opacity:0.9;margin-bottom:8px}
-  .score{font-size:26px;font-weight:700;margin:8px 0;color:#a9ffef}
-  .controls button{
-    background:linear-gradient(180deg,#ff4db4,#9b00ff);
-    border:none;color:white;padding:10px 12px;border-radius:10px;margin-right:8px;
-    cursor:pointer; font-weight:600; box-shadow: 0 6px 12px rgba(155,0,255,0.16);
-  }
-  .controls button.secondary{
-    background:linear-gradient(180deg,#00d4ff,#0066ff);
-    box-shadow: 0 6px 12px rgba(0,102,255,0.12);
-  }
-  .hint{margin-top:10px;font-size:13px;color:#e8e8ff;opacity:0.85}
-  footer{margin-top:20px;font-size:12px;color:#b8b8d8;opacity:0.9}
+/* Overlay Game Over et Password */
+.game-over {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  text-align: center;
+  z-index: 50;
+  pointer-events: auto;
+}
 
-  /* responsive small */
-  @media(max-width:980px){
-    .scene{grid-template-columns: 1fr; padding:20px}
-    .panel{width:auto}
-  }
+.game-over.active { display: block; }
 
-  /* small animation for overlay neon pulse */
-  @keyframes neonPulse {
-    0% { transform: translate(-50%,-50%) scale(0.98); filter: drop-shadow(0 0 6px rgba(255,110,199,0.6)); }
-    50% { transform: translate(-50%,-50%) scale(1.02); filter: drop-shadow(0 0 18px rgba(255,110,199,0.9)); }
-    100% { transform: translate(-50%,-50%) scale(0.98); filter: drop-shadow(0 0 6px rgba(255,110,199,0.6)); }
-  }
-  .game-over.active .panel { animation: neonPulse 1.6s ease-in-out infinite; }
+#passwordOverlay.under-panel {
+  position: relative;
+  transform: none;
+  display: none;
+  margin-top: 100px;
+}
+#passwordOverlay.under-panel.active { display: block; }
+
+.game-over .panel {
+  background: linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.4));
+  border: 2px solid rgba(255,110,199,0.12);
+  border-radius: 12px;
+  padding: 18px 28px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 10px 40px rgba(255,0,150,0.08);
+}
+
+.game-over h2 {
+  margin: 0;
+  font-size: 36px;
+  letter-spacing: 6px;
+  color: #ff6ec7;
+  text-shadow: 0 0 18px rgba(255,110,199,0.9), 0 0 36px rgba(100,0,255,0.25);
+  font-weight: 800;
+  transform: translateY(-6px);
+}
+
+.game-over p {
+  margin: 8px 0 0 0;
+  font-size: 14px;
+  color: #f6e6ff;
+  opacity: 0.9;
+}
+
+.game-over .btns {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.game-over button {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(180deg,#ff4db4,#9b00ff);
+  box-shadow: 0 6px 12px rgba(155,0,255,0.16);
+}
+
+/* Panel de droite */
+.panel {
+  width: 380px;
+  padding: 18px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+}
+
+h1 { font-size: 20px; margin: 0 0 12px 0; color: #ffd3ff; }
+.score { font-size: 26px; font-weight: 700; margin: 8px 0; color: #a9ffef; }
+.controls button {
+  background: linear-gradient(180deg,#ff4db4,#9b00ff);
+  border: none;
+  color: white;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-right: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 6px 12px rgba(155,0,255,0.16);
+}
+.controls button.secondary {
+  background: linear-gradient(180deg,#00d4ff,#0066ff);
+  box-shadow: 0 6px 12px rgba(0,102,255,0.12);
+}
+.hint { margin-top: 10px; font-size: 13px; color: #e8e8ff; opacity: 0.85; }
+footer { margin-top: 20px; font-size: 12px; color: #b8b8d8; opacity: 0.9; }
+
+/* animation pour overlay neon pulse */
+@keyframes neonPulse {
+  0% { transform: translate(-50%,-50%) scale(0.98); filter: drop-shadow(0 0 6px rgba(255,110,199,0.6)); }
+  50% { transform: translate(-50%,-50%) scale(1.02); filter: drop-shadow(0 0 18px rgba(255,110,199,0.9)); }
+  100% { transform: translate(-50%,-50%) scale(0.98); filter: drop-shadow(0 0 6px rgba(255,110,199,0.6)); }
+}
+.game-over.active .panel { animation: neonPulse 1.6s ease-in-out infinite; }
