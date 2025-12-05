@@ -1,5 +1,5 @@
 // --- TYPES & INTERFACES ---
-const COMMANDS = ['ls', 'cd', 'pwd', 'mkdir', 'touch', 'cat', 'echo', 'rm', 'grep', 'clear', 'color'];
+const COMMANDS = ['ls', 'cd', 'pwd', 'mkdir', 'touch', 'cat', 'echo', 'rm', 'grep', 'clear', 'color', 'alias'];
 const COMMAND_OPTIONS = {
     'ls': ['-l', '-a', '-la', '-al'],
     'rm': ['-r', '-f', '-rf'],
@@ -17,7 +17,8 @@ const HELP_MESSAGES = {
     rm: 'rm: Remove (unlink) the FILE(s).\nUsage: rm [options] [file]\nOptions:\n  -r   Remove directories and their contents recursively',
     grep: 'grep: Search for PATTERN in each FILE or standard input.\nUsage: grep [pattern] [file...]',
     color: 'color: Change the terminal text color.\nUsage: color <name|#hex>\nExample: color #00ff00',
-    clear: 'clear: Clear the terminal screen.'
+    clear: 'clear: Clear the terminal screen.',
+    alias: 'alias: Define or display aliases.\nUsage: alias [name "value"]\nExample: alias ll "ls -la"'
 };
 // --- SYSTÈME DE FICHIERS VIRTUEL ---
 class VirtualFileSystem {
@@ -136,13 +137,31 @@ class Shell {
     constructor() {
         this.commandHistory = [];
         this.historyIndex = -1;
+        this.aliases = {};
         this.fs = new VirtualFileSystem();
         this.historyElem = document.getElementById('history');
         this.input = document.getElementById('cmd-input');
         this.promptElem = document.getElementById('prompt');
+        this.loadAliases();
         this.updatePrompt();
         this.setupListeners();
         this.setupFocusManagement();
+    }
+    loadAliases() {
+        const stored = localStorage.getItem('vfs_aliases');
+        if (stored) {
+            this.aliases = JSON.parse(stored);
+        }
+        else {
+            // Alias par défaut sympa
+            this.aliases = {
+                'll': 'ls -la',
+                'la': 'ls -a'
+            };
+        }
+    }
+    saveAliases() {
+        localStorage.setItem('vfs_aliases', JSON.stringify(this.aliases));
     }
     updatePrompt() {
         const path = this.fs.getAbsolutePath();
@@ -333,9 +352,30 @@ class Shell {
             this.printLine(pipedInput);
     }
     executeCommand(cmdString, stdin) {
-        const parts = cmdString.split(/\s+/).filter(s => s.length > 0);
+        // 1. Tokenization initiale
+        let parts = cmdString.split(/\s+/).filter(s => s.length > 0);
         if (parts.length === 0)
             return { output: '' };
+        // 2. Gestion des ALIAS (Expansion)
+        const possibleAlias = parts[0];
+        if (this.aliases[possibleAlias]) {
+            // On récupère la valeur (ex: "cd ..")
+            const expansion = this.aliases[possibleAlias];
+            // On reconstruit la commande : expansion + arguments restants
+            // Ex: alias l="ls -l", input "l /etc" -> "ls -l /etc"
+            const newCmdString = expansion + ' ' + parts.slice(1).join(' ');
+            // Protection simple contre la récursion infinie (si alias ls="ls -la")
+            // Si l'expansion commence par le même mot que l'alias, on ne ré-expanse pas
+            const newParts = newCmdString.split(/\s+/).filter(s => s.length > 0);
+            if (newParts[0] === possibleAlias) {
+                parts = newParts; // On accepte l'expansion mais on arrête de chercher des alias
+            }
+            else {
+                // Sinon, on pourrait rappeler executeCommand récursivement,
+                // mais pour ce shell simple, on remplace juste les parts et on continue.
+                parts = newParts;
+            }
+        }
         const cmd = parts[0];
         const args = parts.slice(1);
         switch (cmd) {
@@ -350,6 +390,7 @@ class Shell {
             case 'grep': return this.cmdGrep(args, stdin);
             case 'color': return this.cmdColor(args);
             case 'clear': return this.cmdClear(args);
+            case 'alias': return this.cmdAlias(args);
             default:
                 return { output: `bash: ${cmd}: command not found`, error: true };
         }
@@ -549,6 +590,39 @@ class Shell {
             return { output: HELP_MESSAGES['clear'] };
         this.historyElem.innerHTML = '';
         return { output: '' };
+    }
+    cmdAlias(args) {
+        if (args.includes('-h') || args.includes('help'))
+            return { output: HELP_MESSAGES['alias'] };
+        // Cas 1: Afficher les alias (pas d'arguments)
+        if (args.length === 0) {
+            const list = Object.keys(this.aliases).map(key => `alias ${key}="${this.aliases[key]}"`).join('\n');
+            return { output: list || 'No aliases defined.' };
+        }
+        // Cas 2: Définir un alias
+        // On doit reconstruire la string brute des arguments pour gérer correctement les quotes
+        // car le split initial dans executeCommand a cassé les espaces dans les quotes.
+        // Reconstruction approximative (on perd les espaces multiples exacts entre args, mais c'est acceptable)
+        const rawArgs = args.join(' ');
+        // Regex pour capturer : nom "valeur"  OU  nom="valeur"  OU  nom valeur
+        // Groupe 1: Le nom de l'alias
+        // Groupe 2: La valeur (avec ou sans quotes)
+        const regex = /^([^\s=]+)(?:\s*=\s*|\s+)["']?(.*?)["']?$/;
+        const match = rawArgs.match(regex);
+        if (match) {
+            const aliasName = match[1];
+            const aliasValue = match[2];
+            // Interdiction d'écraser 'alias' ou 'unalias' (sécurité de base)
+            if (aliasName === 'alias') {
+                return { output: "alias: cannot alias 'alias'", error: true };
+            }
+            this.aliases[aliasName] = aliasValue;
+            this.saveAliases();
+            return { output: '' };
+        }
+        else {
+            return { output: "alias: invalid format. Try: alias name \"command\"", error: true };
+        }
     }
 }
 window.onload = () => {
