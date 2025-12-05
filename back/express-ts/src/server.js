@@ -3,8 +3,16 @@ import cookieParser from "cookie-parser";
 import express from "express";
 import cors from "cors";
 import path from "path";
+import Database from "better-sqlite3";
 const app = express();
 const PORT = 3001;
+const db = new Database("database.db");
+// Exemple table
+db.exec(`
+  CREATE TABLE IF NOT EXISTS snake_verified (
+    ip VARCHAR(50)
+  );
+`);
 const frontBuildPath = path.join(process.cwd(), "../.."); //A CHANGER
 // Middlewares
 app.use(cors({
@@ -12,10 +20,7 @@ app.use(cors({
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
 }));
-app.use(express.static(frontBuildPath));
-app.use(express.json());
-app.use(cookieParser());
-app.get("/api/get_IP", (req, res) => {
+function getIP(req, res) {
     let ip = req.ip;
     if (!ip) {
         res.status(404).send("Invalid IP.");
@@ -25,11 +30,26 @@ app.get("/api/get_IP", (req, res) => {
     if (ip.startsWith("::ffff:")) {
         ip = ip.split(":").pop();
     }
-    res.send(`Votre IP IPv4 est : ${ip}`);
+    return ip;
+}
+app.use(express.static(frontBuildPath));
+app.use(express.json());
+app.use(cookieParser());
+app.get("/api/get_IP", (req, res) => {
+    const ip = getIP(req, res);
+    res.json({ IP: ip });
 });
 app.get("/api/snake_password", (req, res) => {
-    //a implémenter le check en BD
-    res.json({ hasRequiredLevel: true });
+    const ip = getIP(req, res);
+    const stmt = db.prepare("SELECT * FROM snake_verified WHERE ip = ?");
+    const row = stmt.get(ip);
+    res.json({ hasRequiredLevel: row ? true : false });
+});
+app.post("/api/snake_password", (req, res) => {
+    const ip = getIP(req, res);
+    const stmt = db.prepare("INSERT INTO snake_verified (ip) VALUES (?)");
+    stmt.run(ip);
+    res.json({ success: true });
 });
 // Redirect all non-API to index
 app.get("/", (req, res) => {
