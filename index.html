@@ -39,6 +39,9 @@
         <div class="dock-item" title="Jeux" id="games-dock-item">
             <i class="fa-solid fa-gamepad"></i>
         </div>
+        <div class="dock-item" title="Shell" id="shell-dock-item">
+            <i class="fa-solid fa-terminal"></i>
+        </div>
         <div class="dock-item" title="Paramètres" id="settings-dock-item">
             <i class="fa-solid fa-gear"></i>
         </div>
@@ -89,9 +92,9 @@
             className: 'style-recycling',
             // Basé sur recyclage.jpg (Slide 400x460 + contrôles bas)
             width: '400px',
-            height: '600px',
+            height: '700px',
             minWidth: '400px',
-            minHeight: '500px',
+            minHeight: '700px',
             x: 'center',
             y: 'center'
         },
@@ -120,13 +123,13 @@
         },
         snake: {
             title: 'Snake',
-            url: './front/src/winux/apps/snake/index.html',
+            url: './front/src/winux/apps/hiddenSnake/index.html',
             className: 'style-standard',
             // Canvas 380x380 + Scoreboard
-            width: '420px',
-            height: '480px',
-            minWidth: '420px',
-            minHeight: '480px',
+            width: '1450px',
+            height: '768px',
+            minWidth: '1450px',
+            minHeight: '768px',
             x: 'center',
             y: 'center'
         },
@@ -138,6 +141,17 @@
             height: '220px',
             minWidth: '300px',
             minHeight: '200px',
+            x: 'center',
+            y: 'center'
+        },
+        shell: {
+            title: 'Web Shell Pro',
+            url: './front/src/winux/apps/shell/index.html',
+            className: 'style-standard',
+            width: '700px',
+            height: '500px',
+            minWidth: '700px',
+            minHeight: '500px',
             x: 'center',
             y: 'center'
         }
@@ -241,6 +255,10 @@
 
         const settingsIcon = document.getElementById('settings-dock-item');
         if(settingsIcon) settingsIcon.addEventListener('click', () => window.spawnWindow('settings'));
+
+        const shellIcon = document.getElementById('shell-dock-item');
+        if(shellIcon) shellIcon.addEventListener('click', () => window.spawnWindow('shell'));
+
 
         // Listeners du Bureau
         const recycleIcon = document.getElementById("recyclage-module");
