@@ -1,6 +1,11 @@
 /* ===========================
+
    CONFIG & VARIABLES
    =========================== */
+
+const DOMAIN_NAME = "http://129.151.255.248:3001/";
+
+
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -194,7 +199,7 @@ function generateBombs(count) {
 /* ===========================
    GAME LOOP
    =========================== */
-function gameLoop() {
+async function gameLoop() {
   if (gameOver) return;
 
   // appliquer la prochaine direction (réactivité)
@@ -314,7 +319,14 @@ function gameLoop() {
     document.getElementById("score").textContent = score;
 
     // affiche overlay mot de passe si seuil atteint
-    if (score >= 30) document.getElementById("passwordOverlay").classList.add("active");
+    if (score >= 30) {document.getElementById("passwordOverlay").classList.add("active")
+      await fetch(DOMAIN_NAME + "/api/snake_password", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+    };
   } else {
     // si non mangé, on supprime la queue pour avancer normalement
     snake.pop();

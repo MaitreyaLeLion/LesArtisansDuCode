@@ -98,7 +98,7 @@ export class password_check {
 
 	// 7. Inclut 0111 (mois de juillet en binaire)
 	private containsMoonLandingMonthBinary() {
-		return this.result(this.password.includes("0111"), "Le mot de passe doit contenir le mois du premier alunissage en binaire.");
+		return this.result(this.password.includes("0111"), "Le mot de passe doit contenir le mois du premier alunissage en binaire (sur 4 bits).");
 	}
 
 	// 8. Contient une IP valide
