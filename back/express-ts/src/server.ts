@@ -20,13 +20,14 @@ db.exec(`
 const frontBuildPath = path.join(process.cwd(), "../.."); //A CHANGER
 
 // Middlewares
-app.use(
-	cors({
-		origin: "http://127.0.0.1:5500", //A CHANGER
-		methods: ["GET", "POST", "PUT", "DELETE"],
-		credentials: true,
-	})
-);
+// app.use(
+// 	cors({
+// 		origin: "http://127.0.0.1:5500", //A CHANGER
+// 		methods: ["GET", "POST", "PUT", "DELETE"],
+// 		credentials: true,
+// 	})
+// );
+app.use(cors());
 
 function getIP(req: Request, res: Response): string | undefined {
 	let ip = req.ip;
