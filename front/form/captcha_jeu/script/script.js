@@ -151,7 +151,7 @@ function mouvement(event) {
 		Gauche(grid);
 	} else if (event.key === "d" || event.key === "ArrowRight") {
 		Droite(grid);
-	} else if (event.key === " ") {
+	} else if (event.key === "t") {
 		tire(grid);
 	}
 	drawAssets();

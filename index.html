@@ -1,15 +1,266 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <script type="module" defer>
-        import {WINUXWindow} from "./front/src/winux/components/window.js";
-        let wWindow = new WINUXWindow("test-div", "./front/src/winux/apps/shell/index.html");
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINUX OS</title>
+    <link rel="stylesheet" href="./front/assets/style/style.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div id="test-div"></div>
+<div class="background"></div>
 
+<div class="bar">
+    <div class="center-modules">
+        <div class="module"><span id="clock">12:00</span></div>
+    </div>
+    <div class="right-modules">
+        <div class="module"><i class="fa-solid fa-wifi"></i></div>
+        <div class="module"><i class="fa-solid fa-battery-three-quarters"></i></div>
+        <div class="module" id="shutdown-module" title="Éteindre">
+            <i class="fa-solid fa-power-off"></i>
+        </div>
+    </div>
+</div>
+
+<div class="desktop">
+    <div class="desktop-icon" id="recyclage-module">
+        <div class="icon-container">
+            <img src="./front/assets/images/recyclage.png" alt="Recyclage" class="desktop-img">
+        </div>
+        <span class="icon-label">Recyclage</span>
+    </div>
+</div>
+
+<div class="dock-container">
+    <div class="dock">
+        <div class="dock-item" title="Musique">
+            <i class="fa-solid fa-music"></i>
+        </div>
+        <div class="dock-item" title="Jeux" id="games-dock-item">
+            <i class="fa-solid fa-gamepad"></i>
+        </div>
+        <div class="dock-item" title="Paramètres" id="settings-dock-item">
+            <i class="fa-solid fa-gear"></i>
+        </div>
+    </div>
+</div>
+
+<div class="overlay active" id="startup-overlay">
+    <div class="startup-content">
+        <button id="start-btn"><i class="fa-solid fa-power-off"></i></button>
+        <p>Démarrer le système</p>
+    </div>
+</div>
+
+<script type="module">
+    import { WINUXWindow } from './front/src/winux/components/window.js';
+
+
+    // --- 1. CONFIGURATION DES APPLICATIONS (Registry) ---
+    // Définit les propriétés de chaque fenêtre : URL, Dimensions, Position, Style CSS
+    const APPS = {
+        music: {
+            title: 'Lecteur Musique',
+            url: './front/src/winux/apps/music/index.html',
+            className: 'style-music',
+            // Dimensions exactes tirées de music.jpg (400x473)
+            width: '400px',
+            height: '473px',
+            minWidth: '350px',
+            minHeight: '400px',
+            x: 'center',
+            y: 'center'
+        },
+        settings: {
+            title: 'Paramètres',
+            url: './front/src/winux/apps/settings/index.html',
+            className: 'style-settings',
+            // Dimensions exactes tirées de settings.jpg (700x500)
+            width: '700px',
+            height: '600px',
+            minWidth: '700px',
+            minHeight: '600px',
+            x: 'center',
+            y: 'center'
+        },
+        recycling: {
+            title: 'Recyclage',
+            url: './front/src/winux/apps/recycling/index.html',
+            className: 'style-recycling',
+            // Basé sur recyclage.jpg (Slide 400x460 + contrôles bas)
+            width: '400px',
+            height: '600px',
+            minWidth: '400px',
+            minHeight: '500px',
+            x: 'center',
+            y: 'center'
+        },
+        games: {
+            title: 'Arcade',
+            url: './front/src/winux/apps/games/index.html',
+            className: 'style-standard',
+            // Basé sur games.jpg (CSS width: 500px)
+            width: '500px',
+            height: '350px', // Ajusté pour coller au visuel compact
+            minWidth: '400px',
+            minHeight: '300px',
+            x: 'center',
+            y: 'center'
+        },
+        lasergame: {
+            title: 'Laser Game',
+            url: './front/src/winux/apps/lasergame/index.html',
+            className: 'style-standard',
+            // Visible dans le DOM sur music.jpg (900x600)
+            width: '900px',
+            height: '600px',
+            minWidth: '800px',
+            minHeight: '500px',
+            x: 'center',
+            y: 'center'
+        },
+        snake: {
+            title: 'Snake',
+            url: './front/src/winux/apps/snake/index.html',
+            className: 'style-standard',
+            // Canvas 380x380 + Scoreboard
+            width: '420px',
+            height: '480px',
+            minWidth: '420px',
+            minHeight: '480px',
+            x: 'center',
+            y: 'center'
+        },
+        shutdown: {
+            title: 'Arrêt système',
+            url: './front/src/winux/apps/shutdown/index.html',
+            className: 'style-standard',
+            width: '320px',
+            height: '220px',
+            minWidth: '300px',
+            minHeight: '200px',
+            x: 'center',
+            y: 'center'
+        }
+    };
+
+    // --- 2. SYSTEM CORE (Horloge) ---
+    function updateClock() {
+        const clockElement = document.getElementById("clock");
+        if (!clockElement) return;
+        const now = new Date();
+        const dateString = now.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+        const timeString = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        clockElement.textContent = `${dateString} ${timeString}`;
+    }
+
+    // --- 3. WINDOW MANAGER (Gestionnaire de fenêtres) ---
+    // Attaché à window pour être accessible depuis le HTML (onclick="window.spawnWindow(...)")
+    window.spawnWindow = function(appKey) {
+        const app = APPS[appKey];
+        if (!app) return console.error(`App "${appKey}" introuvable dans la configuration.`);
+
+        // Génération d'un ID unique pour permettre plusieurs instances
+        const winId = `win-${appKey}-${Date.now()}`;
+        const desktop = document.querySelector('.desktop');
+
+        // A. Création du conteneur DOM
+        const container = document.createElement('div');
+        container.id = winId;
+
+        // B. Application des classes CSS (Base + Spécifique App)
+        container.classList.add('winux-window'); // Classe de base (position absolute, shadow, etc.)
+        if (app.className) {
+            container.classList.add(app.className); // Ex: style-music (backdrop-filter, border-radius specific)
+        }
+
+        // C. Application des Dimensions (Configuration JS prioritaire)
+        container.style.width = app.width;
+        container.style.height = app.height;
+        if (app.minWidth) container.style.minWidth = app.minWidth;
+        if (app.minHeight) container.style.minHeight = app.minHeight;
+
+        // D. Calcul de la Position
+        let top, left;
+
+        if (app.x === 'center') {
+            // Centrage dynamique au milieu de l'écran
+            const wVal = parseInt(app.width) || 400;
+            const hVal = parseInt(app.height) || 400;
+            left = (window.innerWidth / 2) - (wVal / 2);
+            top = (window.innerHeight / 2) - (hVal / 2);
+        } else {
+            // Position fixe + variation aléatoire (Cascading)
+            const offset = Math.floor(Math.random() * 30);
+            left = parseInt(app.x) + offset;
+            top = parseInt(app.y) + offset;
+        }
+
+        // Sécurité : Empêcher la fenêtre de spawn hors écran (en haut/gauche)
+        if (left < 0) left = 20;
+        if (top < 40) top = 50; // 40px est la hauteur approx de la barre du haut
+
+        container.style.position = 'absolute';
+        container.style.top = `${top}px`;
+        container.style.left = `${left}px`;
+
+        // E. Gestion du Z-Index (Mise au premier plan automatique)
+        const bringToFront = () => {
+            const allWindows = document.querySelectorAll('.winux-window');
+            let maxZ = 100;
+            allWindows.forEach(w => {
+                const z = parseInt(window.getComputedStyle(w).zIndex) || 100;
+                if (z > maxZ) maxZ = z;
+            });
+            container.style.zIndex = maxZ + 1;
+        };
+
+        bringToFront(); // Au spawn
+
+        // F. Injection dans le DOM
+        desktop.appendChild(container);
+
+        // G. Initialisation de la logique Fenêtre (Drag & Drop, Resize via WINUXWindow)
+        new WINUXWindow(winId, app.url);
+
+        // H. Event Listener : Mettre au premier plan au clic
+        container.addEventListener('mousedown', bringToFront);
+    };
+
+    // --- 4. INITIALISATION (Boot) ---
+    document.addEventListener("DOMContentLoaded", () => {
+        // Démarrer l'horloge
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Listeners du Dock (Barre du bas)
+        const musicIcon = document.querySelector('[title="Musique"]');
+        if(musicIcon) musicIcon.addEventListener('click', () => window.spawnWindow('music'));
+
+        const gamesIcon = document.getElementById('games-dock-item');
+        if(gamesIcon) gamesIcon.addEventListener('click', () => window.spawnWindow('games'));
+
+        const settingsIcon = document.getElementById('settings-dock-item');
+        if(settingsIcon) settingsIcon.addEventListener('click', () => window.spawnWindow('settings'));
+
+        // Listeners du Bureau
+        const recycleIcon = document.getElementById("recyclage-module");
+        if(recycleIcon) recycleIcon.addEventListener('click', () => window.spawnWindow('recycling'));
+
+        // Listeners de la Barre du haut
+        const shutdownBtn = document.getElementById("shutdown-module");
+        if(shutdownBtn) shutdownBtn.addEventListener('click', () => window.spawnWindow('shutdown'));
+
+        // Gestion de l'écran de démarrage (Login/Startup Overlay)
+        const startupOverlay = document.getElementById("startup-overlay");
+        const startBtn = document.getElementById("start-btn");
+        if (startBtn && startupOverlay) {
+            startBtn.addEventListener("click", () => {
+                startupOverlay.style.opacity = "0";
+                setTimeout(() => startupOverlay.remove(), 1000);
+            });
+        }
+    });
+</script>
 </body>
 </html>

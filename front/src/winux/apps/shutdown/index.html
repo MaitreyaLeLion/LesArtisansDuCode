@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Éteindre</title>
+</head>
+<body>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./../../../../assets/style/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: var(--bg-color); height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
+        .standard-popup { box-shadow: none; transform: none; width: 100%; border: none; }
+        .popup-header .close-btn { display: none; }
+    </style>
+</head>
+<body>
+<div class="standard-popup">
+    <div class="popup-body">
+        <p>Voulez-vous vraiment éteindre ?</p>
+        <div class="button-group">
+            <button onclick="window.parent.document.getElementById(window.frameElement.parentElement.id).remove()" class="secondary-btn">Annuler</button>
+            <button onclick="window.parent.location.reload()" class="danger-btn">Éteindre</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

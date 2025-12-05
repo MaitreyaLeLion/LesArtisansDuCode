@@ -15,10 +15,6 @@ export declare class WINUXWindow {
      * Helper to create title bar buttons
      */
     private createButton;
-    /**
-     * Tries to get the iframe title.
-     * NOTE: Will fail for external sites (CORS) and fallback to src.
-     */
     private initIframeLogic;
     private toggleMinimize;
     close(): void;

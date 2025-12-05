@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Paramètres</title>
+    <link rel="stylesheet" href="./../../../../assets/style/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: rgba(30, 30, 46, 0.98); height: 100vh; margin: 0; overflow: hidden;display: flex;
+            align-items: center;
+            justify-content: center; }
+        .settings-popup { width: 100%; height: 100%; transform: none !important; box-shadow: none; border: none; border-radius: 0; }
+        .settings-header .close-btn { display: none; } /* Géré par WINUX */
+    </style>
+</head>
+<body>
+<div class="settings-popup">
+    <div class="settings-sidebar">
+        <div class="settings-user-profile">
+            <div class="profile-avatar">
+                <i class="fa-solid fa-circle-user"></i>
+            </div>
+            <div class="profile-info">
+                <span class="username">test</span>
+                <span class="account-type">Compte WINUX</span>
+            </div>
+        </div>
+        <div class="sidebar-item" data-tab="general">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Général</span>
+        </div>
+        <div class="sidebar-item active" data-tab="wallpaper">
+            <i class="fa-solid fa-image"></i>
+            <span>Fond d'écran</span>
+        </div>
+        <div class="settings-actions">
+            <button id="premium-btn" class="premium-btn">
+                <i class="fa-solid fa-crown"></i> Passer Premium
+            </button>
+        </div>
+        <!-- Add more settings items here if needed -->
+    </div>
+    <div class="settings-content">
+
+        <!-- Wallpaper Section -->
+        <div id="settings-section-wallpaper" class="settings-section active">
+            <div class="settings-header">
+                <h3>Fond d'écran</h3>
+                <button class="close-btn close-settings-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="wallpaper-grid">
+                <div class="wallpaper-item" data-wallpaper="default">
+                    <div class="wallpaper-preview" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop');"></div>
+                    <span>Défaut</span>
+                </div>
+                <div class="wallpaper-item" data-wallpaper="france">
+                    <div class="wallpaper-preview" style="background-image: url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop');"></div>
+                    <span>France</span>
+                </div>
+                <div class="wallpaper-item" data-wallpaper="it">
+                    <div class="wallpaper-preview" style="background-image: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop');"></div>
+                    <span>Informatique</span>
+                </div>
+                <div class="wallpaper-item" data-wallpaper="universe">
+                    <div class="wallpaper-preview" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');"></div>
+                    <span>Univers</span>
+                </div>
+                <div class="wallpaper-item" data-wallpaper="nature">
+                    <div class="wallpaper-preview" style="background-image: url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2074&auto=format&fit=crop');"></div>
+                    <span>Nature</span>
+                </div>
+            </div>
+            <div class="settings-actions">
+                <button id="reset-wallpaper-btn" class="secondary-btn">Rétablir par défaut</button>
+            </div>
+        </div>
+
+        <!-- General Section -->
+        <div id="settings-section-general" class="settings-section" style="display: none;">
+            <div class="settings-header">
+                <h3>Général</h3>
+                <button class="close-btn close-settings-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="general-info-container">
+                <div class="info-group">
+                    <label>Système d'exploitation</label>
+                    <span>WINUX OS 1.0 (Beta)</span>
+                </div>
+                <div class="info-group">
+                    <label>Processeur</label>
+                    <span>Intel Core Pentium</span>
+                </div>
+                <div class="info-group">
+                    <label>Mémoire RAM</label>
+                    <span>2 Go DDR2</span>
+                </div>
+                <div class="info-group">
+                    <label>Carte Graphique</label>
+                    <span>Intel HD Graphics 3000</span>
+                </div>
+                <div class="info-group">
+                    <label>Stockage</label>
+                    <span>256 GO HDD</span>
+                </div>
+                <div class="info-group">
+                    <label>Version du noyau</label>
+                    <span>Linux 6.5.0-generic</span>
+                </div>
+            </div>
+        </div>
+        <div class="overlay" id="premium-overlay">
+            <div class="standard-popup premium-popup">
+                <div class="popup-header">
+                    <i class="fa-solid fa-crown"></i>
+                    <h3>WINUX Premium</h3>
+                    <button class="close-btn" id="close-premium-btn"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="popup-body">
+                    <ul class="premium-features">
+                        <li><i class="fa-solid fa-check"></i> Fonctionnalités exclusives</li>
+                        <li><i class="fa-solid fa-check"></i> Support prioritaire 24/7</li>
+                        <li><i class="fa-solid fa-check"></i> Accès anticipé aux bêtas</li>
+                        <li><i class="fa-solid fa-coins"></i> 50% de don à GreenPeace</li>
+                    </ul>
+                    <div class="price-tag">19,99 €</div>
+                    <button class="premium-action-btn">Acheter maintenant</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="./script.js"></script>
+</body>
+</html>

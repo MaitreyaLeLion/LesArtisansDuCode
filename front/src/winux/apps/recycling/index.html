@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Pourquoi Recycler ?</title>
+    <link rel="stylesheet" href="./../../../../assets/style/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: white; height: 100vh; margin: 0;display: flex;
+            align-items: center;
+            justify-content: center; }
+        .carousel-popup { width: 100%; height: 100%; transform: none; box-shadow: none; border-radius: 0; }
+        .popup-header { position: relative; } /* Adapter pour qu'il soit visible */
+    </style>
+</head>
+<body>
+<div class="carousel-popup">
+    <div class="popup-body carousel-body">
+        <div class="carousel-container">
+            <div class="carousel-slide active" id="slide-1">
+                <div class="slide-image-container">
+                    <img src="./../../../../assets/images/reduce.png" alt="Reduce" class="slide-img">
+                </div>
+                <div class="slide-content">
+                    <h3>REDUCE</h3>
+                    <p>Minimisez votre impact numérique. WINUX optimise les ressources pour que vous n'ayez pas à changer de matériel.</p>
+                </div>
+            </div>
+
+            <!-- Slide 2: Recycle -->
+            <div class="carousel-slide" id="slide-2">
+                <div class="slide-image-container">
+                    <img src="./../../../../assets/images/recycle.png" alt="Recycle" class="slide-img">
+                </div>
+                <div class="slide-content">
+                    <h3>RECYCLE</h3>
+                    <p>Donnez une seconde vie à vos composants. Le recyclage intelligent commence par une utilisation prolongée.</p>
+                </div>
+            </div>
+
+            <!-- Slide 3: Reuse -->
+            <div class="carousel-slide" id="slide-3">
+                <div class="slide-image-container">
+                    <img src="./../../../../assets/images/reuse.png" alt="Reuse" class="slide-img">
+                </div>
+                <div class="slide-content">
+                    <h3>REUSE</h3>
+                    <p>Réutilisez, réinventez. Avec WINUX, votre vieux PC devient une machine de guerre moderne.</p>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-controls">
+            <div class="pagination-dots">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <div class="action-buttons">
+                <button id="skip-btn" class="skip-btn">Passer</button>
+                <button id="next-btn" class="next-btn">Suivant</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="./script.js"></script>
+</body>
+</html>
