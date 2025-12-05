@@ -1,0 +1,166 @@
+[
+	{
+		"user_questions": [
+			"Quels sont vos horaires d’ouverture ?",
+			"À quelle heure ouvrez-vous ?",
+			"Jusqu'à quelle heure êtes-vous ouvert ?",
+			"Vos horaires d'ouverture et de fermeture, s'il vous plaît.",
+			"Quand puis-je venir ?"
+		],
+		"possible_answers": [
+			"Du lundi au vendredi de 9h à 18h",
+			"Le samedi de 10h à 14h",
+			"Fermé le dimanche",
+			"Nous sommes ouverts du lundi au vendredi de 9h à 18h.",
+			"Nos horaires sont : du lundi au vendredi de 9h à 18h, le samedi de 10h à 14h et nous sommes fermés le dimanche.",
+			"Veuillez consulter notre page 'Contact' pour les horaires détaillés.",
+			"Nous sommes ouverts de 9h à 18h en semaine."
+		]
+	},
+	{
+		"user_questions": [
+			"Comment puis-je vous contacter ?",
+			"Quel est votre numéro de téléphone ?",
+			"Quelle est votre adresse email ?",
+			"Où se trouve votre formulaire de contact ?",
+			"Y a-t-il un moyen de vous joindre ?",
+			"Puis-je vous envoyer un email ?"
+		],
+		"possible_answers": [
+			"Par téléphone au 01 23 45 67 89",
+			"Par email à contact@monsite.com",
+			"Via le formulaire de contact sur notre site",
+			"Vous pouvez nous contacter par téléphone au 01 23 45 67 89 ou par email à contact@monsite.com.",
+			"Toutes nos coordonnées sont disponibles sur la page 'Contact'.",
+			"Nous avons un formulaire de contact dédié sur notre site web."
+		]
+	},
+	{
+		"user_questions": [
+			"Où êtes-vous situés ?",
+			"Quelle est votre adresse ?",
+			"Avez-vous une boutique physique ?",
+			"Où se trouve votre magasin ?",
+			"Dans quelle ville êtes-vous ?"
+		],
+		"possible_answers": [
+			"Nous sommes situés à Paris, au 12, rue Exemple, 75001 Paris.",
+			"Notre boutique principale se trouve à Lyon, au cœur du quartier de la Presqu'île.",
+			"Notre adresse est : 12 rue Exemple, 75001 Paris.",
+			"Vous pouvez trouver la carte et l'itinéraire sur notre page 'Contact et accès'.",
+			"Nous n'avons pas de magasin physique, mais vous pouvez commander sur notre boutique en ligne."
+		]
+	},
+	{
+		"user_questions": [
+			"Quels services proposez-vous ?",
+			"Quelle est votre offre ?",
+			"Que faites-vous exactement ?",
+			"Quels sont vos domaines d'expertise ?",
+			"Quel type d'aide pouvez-vous apporter ?"
+		],
+		"possible_answers": [
+			"Nous proposons la création de sites web sur mesure.",
+			"Nous assurons la maintenance et le dépannage informatique.",
+			"Nous offrons des services de conseil en stratégie digitale.",
+			"Notre offre complète inclut : la création de sites web, la maintenance informatique et le conseil en stratégie digitale.",
+			"Pour une liste complète, veuillez consulter notre page 'Services'."
+		]
+	},
+	{
+		"user_questions": [
+			"Comment créer un compte sur votre site ?",
+			"Puis-je m'inscrire ?",
+			"Où est le bouton d'inscription ?",
+			"Comment puis-je devenir membre ?",
+			"J'aimerais créer un profil, comment faire ?"
+		],
+		"possible_answers": [
+			"Cliquez sur le lien 'S'inscrire' ou 'Créer un compte' situé en haut à droite de la page.",
+			"Remplissez le formulaire avec vos informations personnelles (email, mot de passe, etc.).",
+			"Une fois le formulaire soumis, validez votre inscription en cliquant sur le lien reçu par email.",
+			"Le processus est simple : cliquez sur 'Créer un compte', remplissez les champs requis, et confirmez votre adresse email.",
+			"Vous trouverez le lien d'inscription dans le menu principal ou au-dessus du champ de connexion."
+		]
+	},
+	{
+		"user_questions": [
+			"Quels moyens de paiement acceptez-vous ?",
+			"Comment puis-je payer ma commande ?",
+			"Puis-je payer avec PayPal ?",
+			"Acceptez-vous les cartes de crédit/débit ?",
+			"Est-il possible de payer par virement ?"
+		],
+		"possible_answers": [
+			"Nous acceptons les cartes bancaires (Visa, MasterCard, Amex).",
+			"Vous pouvez payer via PayPal.",
+			"Nous acceptons également les virements bancaires pour les commandes de plus de 100€.",
+			"Les moyens de paiement disponibles sont la carte bancaire (Visa, MasterCard), PayPal et le virement bancaire.",
+			"Nous n'acceptons pas les chèques."
+		]
+	},
+	{
+		"user_questions": [
+			"Comment suivre ma commande ?",
+			"Quel est le statut de ma commande ?",
+			"Où est mon colis ?",
+			"Pouvez-vous me donner le numéro de suivi ?",
+			"Quand ma commande sera-t-elle livrée ?"
+		],
+		"possible_answers": [
+			"Pour suivre votre commande, veuillez vous connecter à votre compte client sur notre site.",
+			"Une fois connecté, rendez-vous dans la section 'Mes commandes' ou 'Historique des achats'.",
+			"Cliquez sur le numéro de la commande ou sur le bouton 'Suivi' pour voir son statut en temps réel.",
+			"Un email contenant votre numéro de suivi et un lien direct vous a été envoyé dès l'expédition de votre colis.",
+			"Le statut de votre commande est actuellement 'En préparation'."
+		]
+	},
+	{
+		"user_questions": [
+			"Proposez-vous une garantie ou un remboursement ?",
+			"Quelle est votre politique de retour ?",
+			"Quelle est la durée de la garantie ?",
+			"Puis-je me faire rembourser si je change d'avis ?",
+			"Que faire si le produit est défectueux ?"
+		],
+		"possible_answers": [
+			"Oui, nous offrons une garantie de 2 ans sur tous nos produits.",
+			"Vous bénéficiez d'un droit de rétractation et pouvez demander un remboursement sous 14 jours après réception.",
+			"L'échange est possible en cas de défaut de fabrication ou de produit non conforme.",
+			"Veuillez consulter notre page 'Conditions Générales de Vente' pour tous les détails concernant la garantie et le remboursement.",
+			"La garantie couvre les pièces et la main d'œuvre pour une durée de deux ans."
+		]
+	},
+	{
+		"user_questions": [
+			"Comment puis-je m’abonner à votre newsletter ?",
+			"Où puis-je m'inscrire à votre liste de diffusion ?",
+			"Comment recevoir vos actualités et offres spéciales ?",
+			"Avez-vous une newsletter ?",
+			"Puis-je m'abonner aux emails marketing ?"
+		],
+		"possible_answers": [
+			"Vous pouvez vous abonner en entrant votre adresse email dans le champ 'Newsletter' situé en bas de chaque page du site.",
+			"Après avoir entré votre email, cliquez sur le bouton 'S'abonner'.",
+			"Une fois l'inscription effectuée, vous recevrez un email de confirmation; cliquez sur le lien pour valider votre abonnement.",
+			"L'inscription se fait via le formulaire situé dans le pied de page (footer) de notre site.",
+			"Vous commencerez à recevoir nos actualités et offres spéciales dès la validation de votre abonnement."
+		]
+	},
+	{
+		"user_questions": [
+			"Avez-vous une politique de confidentialité ?",
+			"Où puis-je trouver votre politique de protection des données ?",
+			"Comment gérez-vous mes données personnelles ?",
+			"Le site est-il conforme au RGPD ?",
+			"Quelles sont vos mentions légales ?"
+		],
+		"possible_answers": [
+			"Oui, notre politique de confidentialité est disponible via un lien en bas de page du site (pied de page).",
+			"Vous pouvez la consulter dans la section 'Mentions légales' ou 'Politique de confidentialité'.",
+			"Elle est entièrement conforme aux exigences du Règlement Général sur la Protection des Données (RGPD).",
+			"Nous décrivons en détail comment nous collectons, utilisons et protégeons vos données personnelles dans ce document.",
+			"La protection de vos données est une priorité, vous trouverez toutes les informations nécessaires dans notre politique dédiée."
+		]
+	}
+]

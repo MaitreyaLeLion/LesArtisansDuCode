@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Chatbot Néon Doux</title>
+		<style>
+			@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap");
+
+			body {
+				margin: 0;
+				font-family: "Orbitron", sans-serif;
+				background: #0f0f0f;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+			}
+
+			.chat-container {
+				width: 400px;
+				max-width: 90%;
+				background: #1a1a1a;
+				border: 1px solid #39f;
+				border-radius: 12px;
+				box-shadow: 0 0 15px rgba(57, 153, 255, 0.4);
+				display: flex;
+				flex-direction: column;
+				overflow: hidden;
+			}
+
+			.chat-header {
+				background: #222;
+				padding: 12px;
+				text-align: center;
+				font-size: 1.1em;
+				font-weight: bold;
+				color: #39f;
+				text-shadow: 0 0 4px rgba(57, 153, 255, 0.6);
+			}
+
+			.chat-subtitle {
+				text-align: center;
+				font-size: 0.85em;
+				color: #ccc;
+				padding: 5px 12px;
+				font-style: italic;
+			}
+
+			.chat-messages {
+				flex: 1;
+				padding: 12px;
+				overflow-y: auto;
+				display: flex;
+				flex-direction: column;
+				gap: 8px;
+			}
+
+			.message {
+				padding: 8px 12px;
+				border-radius: 8px;
+				max-width: 75%;
+				word-wrap: break-word;
+				font-size: 0.95em;
+			}
+
+			.user-message {
+				align-self: flex-end;
+				background: rgba(57, 153, 255, 0.2);
+				color: #39f;
+			}
+
+			.bot-message {
+				align-self: flex-start;
+				background: rgba(255, 105, 180, 0.15);
+				color: #ff69b4;
+			}
+
+			.chat-input {
+				display: flex;
+				border-top: 1px solid #39f;
+			}
+
+			.chat-input input {
+				flex: 1;
+				padding: 12px;
+				border: none;
+				outline: none;
+				background: #1a1a1a;
+				color: #39f;
+			}
+
+			.chat-input button {
+				padding: 0 18px;
+				border: none;
+				background: #39f;
+				color: #fff;
+				font-weight: bold;
+				cursor: pointer;
+				transition: 0.2s;
+			}
+
+			.chat-input button:hover {
+				background: #5aa0ff;
+			}
+
+			.chat-messages::-webkit-scrollbar {
+				width: 5px;
+			}
+
+			.chat-messages::-webkit-scrollbar-thumb {
+				background: #39f;
+				border-radius: 3px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="chat-container">
+			<div class="chat-header">Chat'Bruti</div>
+			<div class="chat-subtitle">Posez-moi n'importe quelle question sur le site web !</div>
+			<div class="chat-messages" id="chatMessages"></div>
+			<div class="chat-input">
+				<input type="text" id="userInput" placeholder="Tape ton message..." />
+				<button onclick="sendMessage()">Envoyer</button>
+			</div>
+		</div>
+
+		<script>
+			const chatMessages = document.getElementById("chatMessages");
+			const userInput = document.getElementById("userInput");
+
+			function sendMessage() {
+				const text = userInput.value.trim();
+				if (!text) return;
+
+				const userMsg = document.createElement("div");
+				userMsg.className = "message user-message";
+				userMsg.textContent = text;
+				chatMessages.appendChild(userMsg);
+				chatMessages.scrollTop = chatMessages.scrollHeight;
+				userInput.value = "";
+
+				setTimeout(() => {
+					const botMsg = document.createElement("div");
+					botMsg.className = "message bot-message";
+					botMsg.textContent = `Réponse du bot à : "${text}"`;
+					chatMessages.appendChild(botMsg);
+					chatMessages.scrollTop = chatMessages.scrollHeight;
+				}, 700);
+			}
+
+			userInput.addEventListener("keypress", (e) => {
+				if (e.key === "Enter") sendMessage();
+			});
+		</script>
+	</body>
+</html>
