@@ -1,4 +1,4 @@
-class Dashboard {
+export class Dashboard {
     constructor() {
         var _a;
         this.STORAGE_KEY = 'dom-blaster-scores';
@@ -122,3 +122,4 @@ class Dashboard {
 window.addEventListener('load', () => {
     new Dashboard();
 });
+//# sourceMappingURL=dashboard.js.map

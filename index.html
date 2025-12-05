@@ -42,6 +42,11 @@
         <div class="dock-item" title="Shell" id="shell-dock-item">
             <i class="fa-solid fa-terminal"></i>
         </div>
+        <div class="dock-item" title="Dashboard" id="dashboard-dock-item">
+            <i class="fa-solid fa-chart-area"></i>
+        </div>
+
+
         <div class="dock-item" title="Paramètres" id="settings-dock-item">
             <i class="fa-solid fa-gear"></i>
         </div>
@@ -114,10 +119,10 @@
             title: 'Laser Game',
             url: './front/src/winux/apps/laserGame/laserGame.html',
             className: 'style-standard',
-            width: '900px',
-            height: '600px',
-            minWidth: '800px',
-            minHeight: '500px',
+            width: '1200px',
+            height: '900px',
+            minWidth: '900px',
+            minHeight: '600px',
             x: 'center',
             y: 'center'
         },
@@ -151,6 +156,28 @@
             width: '700px',
             height: '500px',
             minWidth: '700px',
+            minHeight: '500px',
+            x: 'center',
+            y: 'center'
+        },
+        dashboard: {
+            title: 'Web Shell Pro',
+            url: './front/src/winux/apps/dashboard/dashboard.html',
+            className: 'style-standard',
+            width: '1000px',
+            height: '700px',
+            minWidth: '1000px',
+            minHeight: '700px',
+            x: 'center',
+            y: 'center'
+        },
+        form: {
+            title: 'Formulaire Admin',
+            url: './front/src/winux/apps/form/form.html',
+            className: 'style-standard',
+            width: '500px',
+            height: '500px',
+            minWidth: '500px',
             minHeight: '500px',
             x: 'center',
             y: 'center'
@@ -258,6 +285,9 @@
 
         const shellIcon = document.getElementById('shell-dock-item');
         if(shellIcon) shellIcon.addEventListener('click', () => window.spawnWindow('shell'));
+
+        const dashboardIcon = document.getElementById('dashboard-dock-item');
+        if(dashboardIcon) dashboardIcon.addEventListener('click', () => window.spawnWindow('dashboard'));
 
 
         // Listeners du Bureau

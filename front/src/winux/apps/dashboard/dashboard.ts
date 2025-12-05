@@ -7,7 +7,7 @@ interface HighScore {
     date: string;
 }
 
-class Dashboard {
+export class Dashboard {
     private readonly STORAGE_KEY = 'dom-blaster-scores';
 
     constructor() {

@@ -16,7 +16,7 @@ interface CommandResult {
     error?: boolean;
 }
 
-const COMMANDS = ['ls', 'cd', 'pwd', 'mkdir', 'touch', 'cat', 'echo', 'rm', 'grep', 'clear', 'color', 'alias'];
+const COMMANDS = ['ls', 'cd', 'pwd', 'mkdir', 'touch', 'cat', 'echo', 'rm', 'grep', 'clear', 'color', 'alias','sudo'];
 const COMMAND_OPTIONS: { [cmd: string]: string[] } = {
     'ls': ['-l', '-a', '-la', '-al'],
     'rm': ['-r', '-f', '-rf'],
@@ -35,7 +35,8 @@ const HELP_MESSAGES: { [cmd: string]: string } = {
     grep: 'grep: Search for PATTERN in each FILE or standard input.\nUsage: grep [pattern] [file...]',
     color: 'color: Change the terminal text color.\nUsage: color <name|#hex>\nExample: color #00ff00',
     clear: 'clear: Clear the terminal screen.',
-    alias: 'alias: Define or display aliases.\nUsage: alias [name "value"]\nExample: alias ll "ls -la"'
+    alias: 'alias: Define or display aliases.\nUsage: alias [name "value"]\nExample: alias ll "ls -la"',
+    sudo: 'sudo: Execute a command as another user.\nUsage: sudo su (Triggers external window)'
 };
 
 // --- SYSTÈME DE FICHIERS VIRTUEL ---
@@ -436,6 +437,7 @@ class Shell {
             case 'color': return this.cmdColor(args);
             case 'clear': return this.cmdClear(args);
             case 'alias': return this.cmdAlias(args);
+            case 'sudo': return this.cmdSudo(args);
             default:
                 return { output: `bash: ${cmd}: command not found`, error: true };
         }
@@ -674,6 +676,24 @@ class Shell {
         } else {
             return { output: "alias: invalid format. Try: alias name \"command\"", error: true };
         }
+    }
+
+    private cmdSudo(args: string[]): CommandResult {
+        if (args.includes('-h') || args.includes('help')) return { output: HELP_MESSAGES['sudo'] };
+
+        if (args[0] === 'su') {
+            // On récupère le parent en le typant comme 'any' pour que TypeScript accepte la méthode personnalisée
+            const parentWindow = window.parent as any;
+
+            if (parentWindow && typeof parentWindow.spawnWindow === 'function') {
+                parentWindow.spawnWindow('form');
+                return { output: '' };
+            } else {
+                return { output: 'Error: spawnWindow function not found on parent window.', error: true };
+            }
+        }
+
+        return { output: 'sudo: only "sudo su" is supported.', error: true };
     }
 }
 
