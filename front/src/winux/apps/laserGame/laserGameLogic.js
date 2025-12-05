@@ -19,17 +19,16 @@ const CONFIG = {
     webDataSpawnRate: 1500
 };
 const WEB_DATA_TEMPLATES = [
-    { type: 'card', html: '<h2>Data Center</h2><p>Flux de données critique.</p>' },
-    { type: 'card', html: '<h2>Proxy</h2><p>Bypass détecté.</p>' },
-    { type: 'text', html: '<p>Le système détecte une intrusion massive.</p>' },
-    { type: 'list', html: '<ul><li>Cluster A</li><li>Cluster B</li><li>Cluster C</li></ul>' },
-    { type: 'warning', html: '<h2>NOYAU</h2><p>Surchauffe imminente.</p>' },
-    { type: 'card', html: '<h2>SQL Injection</h2><p>Table users_db compromise.</p>' },
-    { type: 'text', html: '<code>Error 500: Internal Server Error</code>' }
+    { type: 'card', html: '<div class="nes-container is-rounded is-dark"><p class="title">DATA</p><p>Flux critique.</p></div>' },
+    { type: 'card', html: '<div class="nes-container is-rounded is-dark"><p class="title">PROXY</p><p>Bypass détecté.</p></div>' },
+    { type: 'text', html: '<div class="nes-balloon from-left is-dark"><p>Intrusion système !</p></div>' },
+    { type: 'warning', html: '<div class="nes-container is-rounded is-dark with-title"><p class="title" style="color:red">ERROR</p><p class="nes-text is-error">Surchauffe !</p></div>' },
+    { type: 'card', html: '<div class="nes-container is-dark"><p>SQL Injection...</p></div>' },
+    { type: 'text', html: '<span class="nes-badge"><span class="is-error">404</span></span>' }
 ];
-class Game {
+export class Game {
     constructor() {
-        var _a;
+        var _a, _b;
         this.pseudo = "ANONYME";
         this.rotation = 0;
         this.hp = 100;
@@ -85,7 +84,9 @@ class Game {
         this.difficultyEl = document.getElementById('difficulty-val');
         this.initPlayer();
         this.setupInputs();
+        // --- GESTION DU START (Avec Son) ---
         (_a = document.getElementById('start-btn')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
+            this.playSound('sfx-coin'); // <--- SON COIN
             const input = document.getElementById('player-pseudo');
             if (input && input.value.trim() !== "")
                 this.pseudo = input.value.substring(0, 12).toUpperCase();
@@ -93,16 +94,22 @@ class Game {
             this.convertDomToTargets();
             this.startGame();
         });
+        // --- GESTION DU RESTART (Nouveau code) ---
+        (_b = document.getElementById('restart-btn')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => {
+            this.playSound('sfx-coin'); // <--- SON COIN
+            // On attend 500ms que le son se joue avant de recharger la page
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        });
         this.muteBtn = document.getElementById('mute-btn');
         if (this.muteBtn) {
             this.muteBtn.addEventListener('click', () => {
-                console.log("Click détecté !"); // Vérif dans la console
                 this.toggleSound();
             });
         }
     }
     playSound(id, volume = 0.2) {
-        console.log(`Tentative de son. Son actif ? ${this.isSoundOn}`);
         if (!this.isSoundOn)
             return;
         const sourceSound = document.getElementById(id);
@@ -114,13 +121,22 @@ class Game {
     }
     toggleSound() {
         this.isSoundOn = !this.isSoundOn;
+        const music = document.getElementById('sfx-music');
         if (this.isSoundOn) {
-            this.muteBtn.innerText = "🔊 SON: ON";
-            this.muteBtn.classList.remove('muted');
+            this.muteBtn.innerText = "🔊 SON"; // Style NES simplifié
+            this.muteBtn.classList.remove('is-error');
+            this.muteBtn.classList.add('is-primary');
+            // Relancer la musique si le jeu est en cours
+            if (this.isRunning && music)
+                music.play();
         }
         else {
-            this.muteBtn.innerText = "🔇 SON: OFF";
-            this.muteBtn.classList.add('muted');
+            this.muteBtn.innerText = "🔇 MUET";
+            this.muteBtn.classList.remove('is-primary');
+            this.muteBtn.classList.add('is-error'); // Devient rouge
+            // Couper la musique immédiatement
+            if (music)
+                music.pause();
         }
         this.muteBtn.blur();
     }
@@ -180,6 +196,15 @@ class Game {
         this.lastEnemySpawnTime = Date.now();
         this.lastPowerUpSpawnTime = Date.now();
         this.lastWebDataSpawnTime = Date.now();
+        // --- GESTION MUSIQUE ---
+        const music = document.getElementById('sfx-music');
+        if (music) {
+            music.loop = true; // La musique recommence à la fin
+            if (this.isSoundOn) {
+                music.currentTime = 0; // On remet au début
+                music.play().catch(e => console.log("Audio play blocked", e));
+            }
+        }
         this.loop();
     }
     spawnWebData() {
@@ -306,16 +331,23 @@ class Game {
         this.bullets.forEach(b => {
             if (!b.active)
                 return;
+            // --- COLLISION AVEC ENNEMIS ---
             this.enemies.forEach(e => {
                 if (e.active && this.checkOverlap(b, e)) {
+                    // AJOUT DU SON HIT ICI
+                    // Le volume est à 0.1 (faible) car ça va tirer beaucoup !
+                    this.playSound('sfx-hit', 0.1);
                     this.score += Math.floor(100 * this.difficultyFactor);
                     this.removeEntity(e, this.enemies);
                     this.removeEntity(b, this.bullets);
                     this.updateUI();
                 }
             });
+            // --- COLLISION AVEC CIBLES (DATA) ---
             this.targets.forEach(t => {
                 if (t.active && this.checkOverlap(b, t)) {
+                    // Optionnel : Tu peux aussi mettre le son hit ici
+                    this.playSound('sfx-hit', 0.1);
                     this.score += 50;
                     this.removeEntity(t, this.targets);
                     this.removeEntity(b, this.bullets);
@@ -326,6 +358,7 @@ class Game {
         // Balles ennemies touchent joueur
         this.enemyBullets.forEach(eb => {
             if (eb.active && this.checkOverlap(eb, this.player)) {
+                // Tu peux ajouter un son de dégât ici si tu veux plus tard
                 this.takeDamage(10);
                 this.removeEntity(eb, this.enemyBullets);
             }
@@ -507,6 +540,10 @@ class Game {
     }
     takeDamage(amount) {
         this.hp -= amount;
+        // --- SON DU JOUEUR TOUCHÉ ---
+        // On le joue un peu plus fort que la musique pour bien l'entendre
+        this.playSound('sfx-hit-player', 0.6);
+        // Effet visuel écran rouge
         this.container.style.boxShadow = "inset 0 0 50px red";
         setTimeout(() => this.container.style.boxShadow = "none", 100);
         if (this.hp <= 0)
@@ -515,11 +552,14 @@ class Game {
     }
     updateUI() {
         this.scoreEl.innerText = this.score.toString();
-        this.hpEl.innerText = Math.max(0, this.hp) + "%";
-        if (this.hp < 30)
-            this.hpEl.style.color = 'red';
-        else
-            this.hpEl.style.color = 'var(--neon-green)';
+        // Mise à jour de la barre NES.css
+        const hpBar = document.getElementById('hp-bar');
+        if (hpBar) {
+            hpBar.value = this.hp;
+            // Changement de couleur (classe) selon les HP
+            hpBar.className = this.hp < 30 ? "nes-progress is-error" : "nes-progress is-success";
+        }
+        document.getElementById('hp-val').innerText = Math.max(0, this.hp) + "%";
     }
     render() {
         this.player.element.style.transform = `translate(${this.player.pos.x}px, ${this.player.pos.y}px) rotate(${this.rotation}rad)`;
@@ -550,6 +590,13 @@ class Game {
     }
     gameOver() {
         this.isRunning = false;
+        // --- ARRET MUSIQUE ---
+        const music = document.getElementById('sfx-music');
+        if (music)
+            music.pause(); // On coupe la musique d'ambiance
+        this.playSound('sfx-death');
+        // <--- SON DEATH ---
+        this.playSound('sfx-death');
         if (this.powerUpTimeout)
             clearTimeout(this.powerUpTimeout);
         const modal = document.getElementById('game-over-modal');
@@ -557,16 +604,16 @@ class Game {
         const list = document.getElementById('leaderboard-list');
         if (modal && msg && list) {
             modal.classList.remove('hidden');
-            msg.innerText = `PILOTE : ${this.pseudo} | SCORE : ${this.score}`;
+            // La correction précédente pour l'affichage
+            msg.innerHTML = `PILOTE : ${this.pseudo}<br>SCORE : ${this.score}`;
             const topScores = this.saveAndLoadScores();
             list.innerHTML = "";
             topScores.forEach((s, i) => {
                 const isMe = (s.name === this.pseudo && s.score === this.score);
-                list.innerHTML += `<li style="${isMe ? 'color:yellow; font-weight:bold' : ''}"><span>#${i + 1} ${s.name}</span><span>${s.score}pts</span></li>`;
+                list.innerHTML += `<li style="${isMe ? 'color:#f7d51d; font-weight:bold' : ''}"><span>#${i + 1} ${s.name}</span><span>${s.score}pts</span></li>`;
             });
         }
     }
 }
 window.addEventListener('load', () => new Game());
-export {};
 //# sourceMappingURL=laserGameLogic.js.map

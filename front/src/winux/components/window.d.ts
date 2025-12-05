@@ -8,12 +8,9 @@ export declare class WINUXWindow {
     private preMinimizeHeight;
     constructor(id: string, iframeSrc: string);
     /**
-     * Creates the internal HTML structure: Title Bar (Text + Buttons) + Content
+     * Creates the internal HTML structure
      */
     private buildStructure;
-    /**
-     * Helper to create title bar buttons
-     */
     private createButton;
     private initIframeLogic;
     private toggleMinimize;

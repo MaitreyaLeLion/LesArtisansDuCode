@@ -8,7 +8,7 @@ interface GameObject {
     width: number;
     height: number;
     active: boolean;
-    lastShot?: number; 
+    lastShot?: number;
 }
 
 enum WeaponMode { NORMAL, SPREAD, RAPID }
@@ -21,13 +21,13 @@ interface HighScore { name: string; score: number; date: string; }
 
 // --- CONFIGURATION ---
 const CONFIG = {
-    playerSpeed: 0.6, 
+    playerSpeed: 0.6,
     friction: 0.94,
-    bulletSpeed: 12, 
-    bulletRate: 120, 
-    baseEnemySpawnRate: 2500, 
-    baseEnemySpeed: 1.5, 
-    baseEnemyShootRate: 2000, 
+    bulletSpeed: 12,
+    bulletRate: 120,
+    baseEnemySpawnRate: 2500,
+    baseEnemySpeed: 1.5,
+    baseEnemyShootRate: 2000,
     enemyBulletSpeed: 6,
     powerUpSpawnRate: 8000,
     powerUpDuration: 5000,
@@ -35,31 +35,30 @@ const CONFIG = {
 };
 
 const WEB_DATA_TEMPLATES = [
-    { type: 'card', html: '<h2>Data Center</h2><p>Flux de données critique.</p>' },
-    { type: 'card', html: '<h2>Proxy</h2><p>Bypass détecté.</p>' },
-    { type: 'text', html: '<p>Le système détecte une intrusion massive.</p>' },
-    { type: 'list', html: '<ul><li>Cluster A</li><li>Cluster B</li><li>Cluster C</li></ul>' },
-    { type: 'warning', html: '<h2>NOYAU</h2><p>Surchauffe imminente.</p>' },
-    { type: 'card', html: '<h2>SQL Injection</h2><p>Table users_db compromise.</p>' },
-    { type: 'text', html: '<code>Error 500: Internal Server Error</code>' }
+    { type: 'card', html: '<div class="nes-container is-rounded is-dark"><p class="title">DATA</p><p>Flux critique.</p></div>' },
+    { type: 'card', html: '<div class="nes-container is-rounded is-dark"><p class="title">PROXY</p><p>Bypass détecté.</p></div>' },
+    { type: 'text', html: '<div class="nes-balloon from-left is-dark"><p>Intrusion système !</p></div>' },
+    { type: 'warning', html: '<div class="nes-container is-rounded is-dark with-title"><p class="title" style="color:red">ERROR</p><p class="nes-text is-error">Surchauffe !</p></div>' },
+    { type: 'card', html: '<div class="nes-container is-dark"><p>SQL Injection...</p></div>' },
+    { type: 'text', html: '<span class="nes-badge"><span class="is-error">404</span></span>' }
 ];
 
-class Game {
+export class Game {
     private container!: HTMLElement;
-    private scoreEl!: HTMLElement; 
-    private hpEl!: HTMLElement; 
+    private scoreEl!: HTMLElement;
+    private hpEl!: HTMLElement;
     private difficultyEl!: HTMLElement;
-    
+
     private player!: GameObject;
     private pseudo: string = "ANONYME";
     private rotation: number = 0;
     private hp: number = 100;
     private score: number = 0;
-    
+
     // Gestion des Bonus
     private weaponMode: WeaponMode = WeaponMode.NORMAL;
     private powerUpTimeout: number | null = null;
-    
+
     private difficultyFactor: number = 1.0;
     private startTime: number = 0;
     private keys: { [key: string]: boolean } = {};
@@ -87,8 +86,11 @@ class Game {
 
         this.initPlayer();
         this.setupInputs();
-        
+
+        // --- GESTION DU START (Avec Son) ---
         document.getElementById('start-btn')?.addEventListener('click', () => {
+            this.playSound('sfx-coin'); // <--- SON COIN
+
             const input = document.getElementById('player-pseudo') as HTMLInputElement;
             if(input && input.value.trim() !== "") this.pseudo = input.value.substring(0, 12).toUpperCase();
             document.getElementById('start-screen')!.classList.add('hidden');
@@ -96,17 +98,25 @@ class Game {
             this.startGame();
         });
 
+        // --- GESTION DU RESTART (Nouveau code) ---
+        document.getElementById('restart-btn')?.addEventListener('click', () => {
+            this.playSound('sfx-coin'); // <--- SON COIN
+
+            // On attend 500ms que le son se joue avant de recharger la page
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        });
+
         this.muteBtn = document.getElementById('mute-btn') as HTMLElement;
         if(this.muteBtn) {
             this.muteBtn.addEventListener('click', () => {
-                console.log("Click détecté !"); // Vérif dans la console
                 this.toggleSound();
             });
         }
     }
 
     private playSound(id: string, volume: number = 0.2) {
-        console.log(`Tentative de son. Son actif ? ${this.isSoundOn}`);
         if (!this.isSoundOn) return;
 
         const sourceSound = document.getElementById(id) as HTMLAudioElement;
@@ -119,13 +129,22 @@ class Game {
 
     private toggleSound() {
         this.isSoundOn = !this.isSoundOn;
-        
+        const music = document.getElementById('sfx-music') as HTMLAudioElement;
+
         if (this.isSoundOn) {
-            this.muteBtn.innerText = "🔊 SON: ON";
-            this.muteBtn.classList.remove('muted');
+            this.muteBtn.innerText = "🔊 SON"; // Style NES simplifié
+            this.muteBtn.classList.remove('is-error');
+            this.muteBtn.classList.add('is-primary');
+
+            // Relancer la musique si le jeu est en cours
+            if (this.isRunning && music) music.play();
         } else {
-            this.muteBtn.innerText = "🔇 SON: OFF";
-            this.muteBtn.classList.add('muted');
+            this.muteBtn.innerText = "🔇 MUET";
+            this.muteBtn.classList.remove('is-primary');
+            this.muteBtn.classList.add('is-error'); // Devient rouge
+
+            // Couper la musique immédiatement
+            if (music) music.pause();
         }
         this.muteBtn.blur();
     }
@@ -143,27 +162,27 @@ class Game {
     private convertDomToTargets() {
         const source = document.getElementById('website-content');
         if(!source) return;
-        
+
         // On sélectionne les éléments à transformer
         source.querySelectorAll('h1, h2, p, li, .card').forEach((el) => {
             // On récupère la taille "virtuelle" de l'élément
             const rect = el.getBoundingClientRect();
-            
+
             const div = document.createElement('div');
-            div.className = 'target-element'; 
-            
+            div.className = 'target-element';
+
             // On transfère les classes spécifiques (card, warning) pour garder le style
             if (el.classList.contains('card')) div.classList.add('card');
             if (el.classList.contains('warning')) div.classList.add('warning');
-            
+
             div.innerHTML = el.innerHTML;
-            
+
             // On applique une largeur max pour éviter qu'ils prennent tout l'écran
             div.style.width = 'auto';
-            div.style.maxWidth = '250px'; 
-            
+            div.style.maxWidth = '250px';
+
             this.container.appendChild(div);
-            
+
             // --- CORRECTION DU BUG ---
             // Au lieu de prendre rect.left (qui est toujours à gauche), on génère un X et Y aléatoire
             // On garde une marge de 50px pour ne pas être collé au bord
@@ -171,11 +190,11 @@ class Game {
             const randomY = Math.random() * (window.innerHeight - 100) + 50;
 
             this.targets.push({
-                element: div, 
+                element: div,
                 pos: { x: randomX, y: randomY }, // Position forcée aléatoire
                 vel: { x: (Math.random() - 0.5) * 0.5, y: (Math.random() - 0.5) * 0.5 }, // Vitesse très lente au début
                 width: rect.width || 200, // Largeur par défaut si rect échoue
-                height: rect.height || 100, 
+                height: rect.height || 100,
                 active: true
             });
         });
@@ -194,6 +213,17 @@ class Game {
         this.lastEnemySpawnTime = Date.now();
         this.lastPowerUpSpawnTime = Date.now();
         this.lastWebDataSpawnTime = Date.now();
+
+        // --- GESTION MUSIQUE ---
+        const music = document.getElementById('sfx-music') as HTMLAudioElement;
+        if (music) {
+            music.loop = true;  // La musique recommence à la fin
+            if (this.isSoundOn) {
+                music.currentTime = 0; // On remet au début
+                music.play().catch(e => console.log("Audio play blocked", e));
+            }
+        }
+
         this.loop();
     }
 
@@ -205,7 +235,7 @@ class Game {
         if (now - this.lastEnemySpawnTime > CONFIG.baseEnemySpawnRate / this.difficultyFactor) {
             this.spawnEnemy(); this.lastEnemySpawnTime = now;
         }
-        
+
         // Apparition des bonus
         if (now - this.lastPowerUpSpawnTime > CONFIG.powerUpSpawnRate) {
             this.spawnPowerUp(); this.lastPowerUpSpawnTime = now;
@@ -229,34 +259,34 @@ class Game {
     private spawnWebData() {
         // 1. Choisir un modèle aléatoire
         const template = WEB_DATA_TEMPLATES[Math.floor(Math.random() * WEB_DATA_TEMPLATES.length)];
-        
+
         // 2. Créer l'élément DOM
         const div = document.createElement('div');
         div.className = 'target-element';
-        
+
         // Ajouter des classes spécifiques (card, warning) pour le CSS
         if (template.type === 'card') div.classList.add('card');
         if (template.type === 'warning') div.classList.add('warning');
-        
+
         div.innerHTML = template.html;
         this.container.appendChild(div); // Ajouter au DOM pour calculer sa taille
 
         // 3. Positionnement (Au bord de l'écran, comme les ennemis)
         // On utilise une logique similaire à "getRandomEdgePos" mais adaptée
-        const pos = this.getRandomEdgePos(); 
-        
+        const pos = this.getRandomEdgePos();
+
         // Calculer la direction (ils traversent l'écran lentement)
         // Ils vont vers le centre de l'écran ou traversent simplement
         const angle = Math.atan2((window.innerHeight/2) - pos.y, (window.innerWidth/2) - pos.x);
         // Ajout d'un peu de hasard dans l'angle
-        const randomizedAngle = angle + (Math.random() - 0.5); 
+        const randomizedAngle = angle + (Math.random() - 0.5);
         const speed = 1 + Math.random(); // Vitesse lente et variable
 
         // 4. Ajouter à la liste des cibles
         const rect = div.getBoundingClientRect();
         // Ajuster la largeur si nécessaire (par défaut c'est block)
-        div.style.width = 'auto'; 
-        
+        div.style.width = 'auto';
+
         this.targets.push({
             element: div,
             pos: pos,
@@ -280,21 +310,21 @@ class Game {
     private spawnPowerUp() {
         // 50% de chance d'avoir l'un ou l'autre
         const type = Math.random() > 0.5 ? WeaponMode.SPREAD : WeaponMode.RAPID;
-        
+
         const el = document.createElement('div');
         // On ajoute les classes CSS pour le style (voir CSS)
         el.className = 'powerup ' + (type === WeaponMode.SPREAD ? 'spread' : 'rapid');
-        el.innerText = type === WeaponMode.SPREAD ? '💥' : '⚡'; 
+        el.innerText = type === WeaponMode.SPREAD ? '💥' : '⚡';
         this.container.appendChild(el);
-        
+
         // Position aléatoire DANS l'écran (Marge de 50px pour ne pas être collé au bord)
         const margin = 50;
         const x = Math.random() * (window.innerWidth - (margin * 2)) + margin;
         const y = Math.random() * (window.innerHeight - (margin * 2)) + margin;
-        
+
         this.powerUps.push({
-            element: el, 
-            pos: { x: x, y: y }, 
+            element: el,
+            pos: { x: x, y: y },
             type: type,
             vel: { x: 0, y: 0 }, // Vitesse = 0, l'objet ne bouge pas, il attend d'être ramassé
             width: 40, height: 40, active: true
@@ -307,16 +337,16 @@ class Game {
     private collectPowerUp(p: PowerUpObject) {
         // 1. On retire l'objet visuel (il est "consommé")
         this.removeEntity(p, this.powerUps);
-        
+
         // 2. Score et Changement d'arme
         this.score += 250;
         this.weaponMode = p.type;
-        
+
         // 3. Gestion du Timer (Reset si on en prend un autre avant la fin)
         if(this.powerUpTimeout) {
             clearTimeout(this.powerUpTimeout);
         }
-        
+
         // 4. Feedback Visuel (Message à l'écran)
         const info = document.createElement('div');
         info.innerText = p.type === WeaponMode.SPREAD ? "DISPERSION ACTIVÉE !" : "TIR RAPIDE ACTIVÉ !";
@@ -331,7 +361,7 @@ class Game {
         this.powerUpTimeout = setTimeout(() => {
             this.weaponMode = WeaponMode.NORMAL; // Retour à la normale
             this.powerUpTimeout = null;
-            
+
             // Petit message de fin d'effet
             const endMsg = document.createElement('div');
             endMsg.innerText = "ARMES NORMALES";
@@ -341,7 +371,7 @@ class Game {
             setTimeout(() => endMsg.remove(), 1000);
 
         }, CONFIG.powerUpDuration);
-        
+
         this.updateUI();
     }
 
@@ -356,16 +386,31 @@ class Game {
         // Balles du joueur touchent ennemis ou cibles
         this.bullets.forEach(b => {
             if(!b.active) return;
+
+            // --- COLLISION AVEC ENNEMIS ---
             this.enemies.forEach(e => {
                 if(e.active && this.checkOverlap(b, e)) {
+                    // AJOUT DU SON HIT ICI
+                    // Le volume est à 0.1 (faible) car ça va tirer beaucoup !
+                    this.playSound('sfx-hit', 0.1);
+
                     this.score += Math.floor(100 * this.difficultyFactor);
-                    this.removeEntity(e, this.enemies); this.removeEntity(b, this.bullets); this.updateUI();
+                    this.removeEntity(e, this.enemies);
+                    this.removeEntity(b, this.bullets);
+                    this.updateUI();
                 }
             });
+
+            // --- COLLISION AVEC CIBLES (DATA) ---
             this.targets.forEach(t => {
                 if(t.active && this.checkOverlap(b, t)) {
+                    // Optionnel : Tu peux aussi mettre le son hit ici
+                    this.playSound('sfx-hit', 0.1);
+
                     this.score += 50;
-                    this.removeEntity(t, this.targets); this.removeEntity(b, this.bullets); this.updateUI();
+                    this.removeEntity(t, this.targets);
+                    this.removeEntity(b, this.bullets);
+                    this.updateUI();
                 }
             });
         });
@@ -373,7 +418,9 @@ class Game {
         // Balles ennemies touchent joueur
         this.enemyBullets.forEach(eb => {
             if(eb.active && this.checkOverlap(eb, this.player)) {
-                this.takeDamage(10); this.removeEntity(eb, this.enemyBullets);
+                // Tu peux ajouter un son de dégât ici si tu veux plus tard
+                this.takeDamage(10);
+                this.removeEntity(eb, this.enemyBullets);
             }
         });
     }
@@ -436,7 +483,7 @@ class Game {
         el.style.background = color;
         el.style.boxShadow = `0 0 10px ${color}`;
         this.container.appendChild(el);
-        
+
         let startX = this.player.pos.x;
         let startY = this.player.pos.y;
         if(offset) { startX += offset.x; startY += offset.y; }
@@ -468,7 +515,7 @@ class Game {
 
     private updateEnemies() {
         const currentSpeed = CONFIG.baseEnemySpeed * this.difficultyFactor;
-        const shootRate = CONFIG.baseEnemyShootRate / this.difficultyFactor; 
+        const shootRate = CONFIG.baseEnemyShootRate / this.difficultyFactor;
         const now = Date.now();
         this.enemies.forEach(en => {
             const angle = Math.atan2(this.player.pos.y - en.pos.y, this.player.pos.x - en.pos.x);
@@ -497,7 +544,7 @@ class Game {
     }
 
     private updateTargets() { this.updateFloatingEntities(this.targets); }
-    
+
     private updateFloatingEntities(list: GameObject[]) {
         list.forEach(t => {
             t.pos.x += t.vel.x; t.pos.y += t.vel.y;
@@ -527,14 +574,28 @@ class Game {
     }
     private takeDamage(amount: number) {
         this.hp -= amount;
-        this.container.style.boxShadow = "inset 0 0 50px red"; setTimeout(() => this.container.style.boxShadow = "none", 100);
+
+        // --- SON DU JOUEUR TOUCHÉ ---
+        // On le joue un peu plus fort que la musique pour bien l'entendre
+        this.playSound('sfx-hit-player', 0.6);
+
+        // Effet visuel écran rouge
+        this.container.style.boxShadow = "inset 0 0 50px red";
+        setTimeout(() => this.container.style.boxShadow = "none", 100);
+
         if (this.hp <= 0) this.gameOver();
         this.updateUI();
     }
     private updateUI() {
         this.scoreEl.innerText = this.score.toString();
-        this.hpEl.innerText = Math.max(0, this.hp) + "%";
-        if(this.hp < 30) this.hpEl.style.color = 'red'; else this.hpEl.style.color = 'var(--neon-green)';
+        // Mise à jour de la barre NES.css
+        const hpBar = document.getElementById('hp-bar') as HTMLProgressElement;
+        if(hpBar) {
+            hpBar.value = this.hp;
+            // Changement de couleur (classe) selon les HP
+            hpBar.className = this.hp < 30 ? "nes-progress is-error" : "nes-progress is-success";
+        }
+        document.getElementById('hp-val')!.innerText = Math.max(0, this.hp) + "%";
     }
     private render() {
         this.player.element.style.transform = `translate(${this.player.pos.x}px, ${this.player.pos.y}px) rotate(${this.rotation}rad)`;
@@ -548,11 +609,11 @@ class Game {
         let scores: HighScore[] = existingData ? JSON.parse(existingData) : [];
 
         // 1. Ajouter le nouveau score
-        scores.push({ 
-            name: this.pseudo, 
-            score: this.score, 
+        scores.push({
+            name: this.pseudo,
+            score: this.score,
             // On utilise le format YYYY-MM-DD pour que le tri par date du Dashboard fonctionne parfaitement
-            date: new Date().toISOString().split('T')[0] 
+            date: new Date().toISOString().split('T')[0]
         });
 
         // ---------------------------------------------------------
@@ -563,25 +624,39 @@ class Game {
 
         // 3. Trier pour l'affichage (Meilleur score en premier)
         scores.sort((a, b) => b.score - a.score);
-        
+
         // On retourne le top 5 pour l'écran de Game Over
         return scores.slice(0, 5);
     }
-    
+
     private gameOver() {
         this.isRunning = false;
+
+        // --- ARRET MUSIQUE ---
+        const music = document.getElementById('sfx-music') as HTMLAudioElement;
+        if (music) music.pause(); // On coupe la musique d'ambiance
+
+        this.playSound('sfx-death');
+
+        // <--- SON DEATH ---
+        this.playSound('sfx-death');
+
         if(this.powerUpTimeout) clearTimeout(this.powerUpTimeout);
+
         const modal = document.getElementById('game-over-modal');
         const msg = document.getElementById('final-score-msg');
         const list = document.getElementById('leaderboard-list');
+
         if(modal && msg && list) {
             modal.classList.remove('hidden');
-            msg.innerText = `PILOTE : ${this.pseudo} | SCORE : ${this.score}`;
+            // La correction précédente pour l'affichage
+            msg.innerHTML = `PILOTE : ${this.pseudo}<br>SCORE : ${this.score}`;
+
             const topScores = this.saveAndLoadScores();
             list.innerHTML = "";
             topScores.forEach((s, i) => {
                 const isMe = (s.name === this.pseudo && s.score === this.score);
-                list.innerHTML += `<li style="${isMe ? 'color:yellow; font-weight:bold' : ''}"><span>#${i+1} ${s.name}</span><span>${s.score}pts</span></li>`;
+                list.innerHTML += `<li style="${isMe ? 'color:#f7d51d; font-weight:bold' : ''}"><span>#${i+1} ${s.name}</span><span>${s.score}pts</span></li>`;
             });
         }
     }
