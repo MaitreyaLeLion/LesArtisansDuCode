@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM BLASTER - Analytics</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>LASER <span>GAME</span> ANALYTICS</h1>
+        <div class="header-actions">
+            <button id="btn-purge" class="btn btn-danger">🗑 PURGER DATA</button>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        <div class="card kpi-card">
+            <div class="kpi-title">Meilleur Score</div>
+            <div class="kpi-value" id="kpi-high">0</div>
+            <div class="kpi-trend">Record actuel</div>
+        </div>
+        <div class="card kpi-card">
+            <div class="kpi-title">Parties Jouées</div>
+            <div class="kpi-value" id="kpi-count">0</div>
+            <div class="kpi-trend">Total session</div>
+        </div>
+        <div class="card kpi-card">
+            <div class="kpi-title">Score Moyen</div>
+            <div class="kpi-value" id="kpi-avg">0</div>
+            <div class="kpi-trend">Performance globale</div>
+        </div>
+        <div class="card kpi-card">
+            <div class="kpi-title">Joueur Top</div>
+            <div class="kpi-value" id="kpi-top-player" style="font-size: 24px;">-</div>
+            <div class="kpi-trend">Leader du classement</div>
+        </div>
+
+        <div class="card chart-container">
+            <canvas id="scoreChart"></canvas>
+        </div>
+        <div class="card chart-container">
+            <canvas id="barChart"></canvas>
+        </div>
+
+        <div class="card table-container">
+            <h3 class="section-title">Historique Détaillé</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rang</th>
+                        <th>Pilote</th>
+                        <th>Score</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

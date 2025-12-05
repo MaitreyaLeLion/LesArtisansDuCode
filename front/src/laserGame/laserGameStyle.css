@@ -1,0 +1,172 @@
+:root {
+    --bg-color: #212529;
+    
+    /* --- CORRECTION DES BALLES INVISIBLES --- */
+    /* On remet les variables que le JS cherche, mais avec les couleurs NES */
+    --neon-blue: #209cee;   /* Bleu NES (Pour le tir Spread) */
+    --neon-yellow: #f7d51d; /* Jaune NES (Pour le tir Rapide) */
+    --neon-green: #92cc41;  /* Vert NES */
+    --neon-red: #e76e55;    /* Rouge NES */
+}
+
+body {
+    margin: 0; overflow: hidden;
+    background-color: var(--bg-color);
+    font-family: 'Press Start 2P', cursive;
+    color: white;
+    user-select: none;
+    
+    /* --- CORRECTION SOURIS --- */
+    /* On laisse le curseur visible. 'crosshair' fait très jeu de tir, 
+       sinon met 'auto' pour la flèche normale */
+    cursor: crosshair; 
+    
+    image-rendering: pixelated; 
+}
+
+/* UI LAYER */
+#ui-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2000; }
+
+#hud {
+    position: fixed; top: 20px; left: 20px; 
+    z-index: 3000;
+    pointer-events: auto; 
+    padding: 10px !important;
+    font-size: 12px;
+}
+
+.hidden { display: none !important; }
+
+/* ECRANS */
+#start-screen, #game-over-modal {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); /* Un peu plus sombre */
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    pointer-events: auto; 
+    z-index: 4000;
+}
+
+/* LE JEU */
+#game-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; }
+
+/* VAISSEAU */
+.player-ship { 
+    position: absolute; 
+    width: 0; height: 0; 
+    border-left: 10px solid transparent; 
+    border-right: 10px solid transparent; 
+    border-bottom: 25px solid white; 
+    transform-origin: center center; 
+    z-index: 1002;
+    filter: drop-shadow(4px 4px 0px #000); 
+}
+
+/* BALLES */
+.bullet { 
+    position: absolute; 
+    width: 8px; height: 8px; 
+    /* La couleur background est gérée par le JS (via les variables définies plus haut) */
+    box-shadow: 2px 2px 0px #000; 
+    border-radius: 0; /* Carré strict pour le pixel art */
+    z-index: 1001;
+}
+
+/* ENNEMIS */
+.enemy {
+    position: absolute;
+    width: 50px; height: 50px;
+    
+    /* Fond sombre pour le corps */
+    background: var(--neon-red); 
+    
+    /* FORME : Cornes en haut, pointes en bas */
+    clip-path: polygon(
+        0% 0%,     /* Corne Gauche Haut */
+        30% 20%,   /* Creux Tête */
+        70% 20%,   /* Creux Tête */
+        100% 0%,   /* Corne Droite Haut */
+        80% 100%,  /* Pointe Droite Bas */
+        50% 80%,   /* Creux Menton */
+        20% 100%   /* Pointe Gauche Bas */
+    );
+    
+    /* Pas de border standard car clip-path le coupe, 
+       on utilise drop-shadow pour l'ombre pixel 3D */
+    filter: drop-shadow(4px 4px 0px #000); 
+    
+    z-index: 1000;
+    
+    /* Petite animation de flottement menaçant */
+    animation: floatEnemy 2s ease-in-out infinite;
+}
+
+/* LES YEUX (Pseudo-éléments) */
+.enemy::before, .enemy::after {
+    content: '';
+    position: absolute;
+    top: 35%;
+    width: 8px; height: 8px;
+    background: #f7d51d; /* Jaune perçant */
+    box-shadow: 0 0 5px #f7d51d; /* Glow */
+    z-index: 1001;
+}
+
+/* Oeil Gauche */
+.enemy::before {
+    left: 25%;
+    /* Inclinaison pour regard fâché \ */
+    transform: rotate(45deg); 
+}
+
+/* Oeil Droit */
+.enemy::after {
+    right: 25%;
+    /* Inclinaison pour regard fâché / */
+    transform: rotate(-45deg); 
+}
+
+/* On garde la config des balles ennemies */
+.enemy-bullet {
+    position: absolute; width: 10px; height: 10px; 
+    background: var(--neon-red);
+    box-shadow: 2px 2px 0 #000;
+    z-index: 950;
+}
+
+/* BONUS */
+.powerup {
+    position: absolute; 
+    width: 40px; height: 40px;
+    background: var(--neon-yellow);
+    border: 4px solid #000;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.5); 
+    z-index: 900;
+    color: black;
+}
+.powerup.spread { background: var(--neon-blue); color: white; } 
+.powerup.rapid { background: var(--neon-yellow); } 
+
+/* ELEMENTS FLOTTANTS */
+.target-element {
+    position: absolute;
+    z-index: 900;
+    max-width: 250px;
+}
+
+/* ANIMATIONS */
+@keyframes blinker { 50% { opacity: 0; } }
+.blink { animation: blinker 0.5s step-end infinite; }
+
+#leaderboard-list li {
+    display: flex; /* Active le mode flexible */
+    justify-content: space-between; /* Pousse le nom à gauche et le score à droite */
+    align-items: center;
+    margin-bottom: 10px; /* Un peu d'espace entre les lignes */
+}
+
+/* Optionnel : Si tu veux que le nom ne soit pas collé aux puces de la liste */
+#leaderboard-list span:first-child {
+    margin-right: 20px;
+}
