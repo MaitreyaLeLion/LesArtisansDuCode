@@ -338,7 +338,7 @@
                             <h4>Laser Game</h4>
                             <p>Jeu de tir laser</p>
                         </div>
-                        <button class="play-btn">Jouer</button>
+                        <button class="play-btn" id="play-lasergame-btn">Jouer</button>
                     </div>
                     <div class="game-item">
                         <div class="game-icon">
@@ -355,6 +355,20 @@
                     <i class="fa-solid fa-clock"></i>
                     <p>D'autres jeux sortiront bientôt !</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Laser Game Overlay -->
+    <div class="overlay" id="lasergame-overlay">
+        <div class="standard-popup lasergame-popup" style="width: 900px; height: 600px; max-width: 95vw; max-height: 95vh; display: flex; flex-direction: column;">
+            <div class="popup-header">
+                <i class="fa-solid fa-gun"></i>
+                <h3>Laser Game</h3>
+                <button class="close-btn" id="close-lasergame-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="popup-body" style="flex: 1; padding: 0; overflow: hidden; background: #000;">
+                <iframe id="lasergame-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
             </div>
         </div>
     </div>

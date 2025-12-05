@@ -422,12 +422,49 @@ function initGames() {
             if (e.target === gamesOverlay) gamesOverlay.classList.remove("active");
         });
     }
+}
 
-    playBtns.forEach(btn => {
-        btn.addEventListener("click", () => {
-            alert("Ce jeu sera bientôt disponible !");
+/**
+ * Initializes the Laser Game module.
+ */
+function initLaserGame() {
+    const playBtn = document.getElementById("play-lasergame-btn");
+    const overlay = document.getElementById("lasergame-overlay");
+    const closeBtn = document.getElementById("close-lasergame-btn");
+    const iframe = document.getElementById("lasergame-iframe");
+    const popup = document.querySelector(".lasergame-popup");
+    const header = document.querySelector(".lasergame-popup .popup-header");
+
+    console.log("Initializing Laser Game module");
+    if (playBtn) {
+        playBtn.addEventListener("click", () => {
+            console.log("Play Laser Game button clicked");
+            if (overlay) overlay.classList.add("active");
+            if (iframe) {
+                console.log("Setting iframe src to ./index.html");
+                iframe.src = "./laserGame/laserGame.html";
+            }
         });
-    });
+    }
+
+    const closeGame = () => {
+        if (overlay) overlay.classList.remove("active");
+        // Optional: Reset iframe to stop game/sound when closed
+        if (iframe) iframe.src = "";
+    };
+
+    if (closeBtn) closeBtn.addEventListener("click", closeGame);
+    
+    if (overlay) {
+        overlay.addEventListener("click", (e) => {
+            if (e.target === overlay) closeGame();
+        });
+    }
+
+    // Make window draggable
+    if (popup && header) {
+        new Draggable(popup, header);
+    }
 }
 
 // ==========================================================================================
@@ -769,6 +806,7 @@ function init() {
     initSettings();
     initPremium();
     initGames();
+    initLaserGame();
 
     // Initialize Applications
     new MusicPlayer();
