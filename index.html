@@ -45,6 +45,9 @@
         <div class="dock-item" title="Dashboard" id="dashboard-dock-item">
             <i class="fa-solid fa-chart-area"></i>
         </div>
+        <div class="dock-item" title="Dashboard" id="chatbot-dock-item">
+            <i class="fa-solid fa-robot"></i>
+        </div>
 
 
         <div class="dock-item" title="Paramètres" id="settings-dock-item">
@@ -181,6 +184,17 @@
             minHeight: '500px',
             x: 'center',
             y: 'center'
+        },
+        chatbot: {
+            title: 'Chat\'Bruti',
+            url: './front/src/winux/apps/chatbot/index.html',
+            className: 'style-standard',
+            width: '500px',
+            height: '700px',
+            minWidth: '500px',
+            minHeight: '700px',
+            x: 'center',
+            y: 'center'
         }
     };
 
@@ -288,6 +302,9 @@
 
         const dashboardIcon = document.getElementById('dashboard-dock-item');
         if(dashboardIcon) dashboardIcon.addEventListener('click', () => window.spawnWindow('dashboard'));
+
+        const chatbotIcon = document.getElementById('chatbot-dock-item');
+        if(chatbotIcon) chatbotIcon.addEventListener('click', () => window.spawnWindow('chatbot'));
 
 
         // Listeners du Bureau
