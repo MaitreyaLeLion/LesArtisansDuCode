@@ -7,7 +7,7 @@ import Database from "better-sqlite3";
 import fetch from "node-fetch";
 const app = express();
 const PORT = 3001;
-const FLASK_URL = "http://129.151.255.248:3002/api/chatbot";
+const FLASK_URL = "http://localhost:3002/api/chatbot";
 const db = new Database("database.db");
 // Exemple table
 db.exec(`
