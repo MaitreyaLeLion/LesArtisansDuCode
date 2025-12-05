@@ -5,9 +5,11 @@ import cors from "cors";
 import path from "path";
 import apiRouter from "./routes/api.js";
 import Database from "better-sqlite3";
+import fetch from "node-fetch";
 
 const app = express();
 const PORT = 3001;
+const FLASK_URL = "http://129.151.255.248:3002/api/chatbot";
 const db = new Database("database.db");
 
 // Exemple table
@@ -67,6 +69,22 @@ app.post("/api/snake_password", (req, res) => {
 	stmt.run(ip);
 
 	res.json({ success: true });
+});
+
+app.post("/api/chatbot", async (req, res) => {
+	try {
+		const response = await fetch(FLASK_URL, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(req.body), // Forward le body reçu
+		});
+
+		const data = await response.json();
+		res.json(data); // renvoie la réponse de Flask au front
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({ error: "Erreur lors de la requête vers Flask" });
+	}
 });
 
 // Redirect all non-API to index

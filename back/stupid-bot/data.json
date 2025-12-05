@@ -162,5 +162,213 @@
 			"Nous décrivons en détail comment nous collectons, utilisons et protégeons vos données personnelles dans ce document.",
 			"La protection de vos données est une priorité, vous trouverez toutes les informations nécessaires dans notre politique dédiée."
 		]
+	},
+	{
+		"user_questions": [
+			"Quel est le nom de votre système d’exploitation ?",
+			"Comment s'appelle l'OS sur lequel vous fonctionnez ?",
+			"Quel est le nom du système derrière votre interface ?",
+			"Quel est le système d'exploitation que vous utilisez ?",
+			"Pouvez-vous me donner le nom de votre OS ?"
+		],
+		"possible_answers": [
+			"Mon nom est WINUX.",
+			"Je fonctionne sous WINUX, un système d'exploitation basé sur Chromium.",
+			"Le nom de ce système d'exploitation est WINUX.",
+			"Ce système est appelé WINUX, conçu pour la simplicité et la légèreté.",
+			"L'OS que vous utilisez est WINUX."
+		]
+	},
+	{
+		"user_questions": [
+			"Sur quels appareils puis-je installer votre OS ?",
+			"Quels sont les prérequis matériels pour WINUX ?",
+			"Est-ce que WINUX est compatible avec mon ancien ordinateur ?",
+			"Est-ce que je peux installer WINUX sur un PC ou un Mac ?",
+			"De combien de RAM et d'espace disque ai-je besoin pour WINUX ?"
+		],
+		"possible_answers": [
+			"WINUX est conçu pour être extrêmement léger grâce à sa base Chromium. Il peut être installé sur pratiquement n'importe quel PC ou ordinateur portable x86-64, même les plus anciens.",
+			"Les exigences sont minimales : un processeur 64 bits, 2 Go de RAM minimum (4 Go recommandés) et 16 Go d'espace disque suffisent pour l'installation de base.",
+			"Puisque WINUX est basé sur Chromium, il est compatible avec une vaste gamme de matériel. Si votre appareil peut exécuter n'importe quelle distribution Linux récente ou ChromeOS, il fonctionnera avec WINUX.",
+			"Oui, WINUX peut être installé sur la plupart des ordinateurs de bureau et portables PC (avec un BIOS ou UEFI) ainsi que sur certains modèles de Mac via une machine virtuelle ou un dual-boot.",
+			"Étant léger, WINUX est une excellente solution pour redonner vie à d'anciens appareils qui sont devenus trop lents sous Windows ou macOS."
+		]
+	},
+	{
+		"user_questions": [
+			"En quoi WINUX est-il différent de Windows, Linux ou macOS ?",
+			"Quelle est la distinction principale entre WINUX et les OS traditionnels ?",
+			"WINUX est-il plus orienté cloud que Windows ou Mac ?",
+			"Comment se positionne WINUX par rapport à un OS complet comme Linux ?",
+			"Quelle est la philosophie de WINUX par rapport aux autres systèmes d'exploitation ?"
+		],
+		"possible_answers": [
+			"WINUX se concentre sur l'essentiel : la navigation web et les applications cloud. Contrairement à Windows ou macOS qui sont des OS complets et lourds, WINUX est léger et démarre très rapidement.",
+			"Sa principale différence est sa base Chromium, ce qui signifie que l'expérience utilisateur est centrée autour du navigateur. L'installation d'applications se fait principalement via le Web ou les technologies de type PWA (Progressive Web Apps).",
+			"Contrairement à une distribution Linux standard qui offre une personnalisation et un accès profond au système, WINUX est simplifié et sécurisé par nature, limitant la complexité pour l'utilisateur.",
+			"WINUX est plus léger et utilise moins de ressources que ses homologues, ce qui le rend idéal pour le matériel plus ancien. Il priorise la vitesse et la simplicité sur la richesse fonctionnelle des OS traditionnels.",
+			"La gestion des fichiers et les paramètres sont beaucoup plus simples et orientés 'cloud' sur WINUX, alors que Windows/macOS/Linux gèrent tout localement par défaut."
+		]
+	},
+	{
+		"user_questions": [
+			"Comment installer votre OS ?",
+			"Quel est le processus d'installation de WINUX ?",
+			"Est-ce facile d'installer WINUX sur une clé USB ?",
+			"Où puis-je trouver le fichier d'installation de WINUX ?",
+			"L'installation de WINUX est-elle plus simple que celle de Windows ?"
+		],
+		"possible_answers": [
+			"L'installation de WINUX est extrêmement simple. Il vous suffit de télécharger l'image disque (ISO) depuis notre site officiel et de la copier sur une clé USB bootable à l'aide d'un outil comme Etcher ou Rufus.",
+			"Le processus est généralement : Télécharger l'ISO > Créer la clé USB bootable > Démarrer votre ordinateur sur la clé > Suivre les quelques étapes de l'installateur graphique simple.",
+			"Étant basé sur Chromium, WINUX est conçu pour une installation rapide et non-invasive. La procédure est beaucoup plus rapide et nécessite moins de décisions complexes que l'installation de Windows.",
+			"Vous pouvez même l'exécuter directement depuis la clé USB (mode Live) pour le tester sans l'installer sur votre disque dur.",
+			"Une fois la clé USB prête, le processus ne prend généralement que quelques minutes."
+		]
+	},
+	{
+		"user_questions": [
+			"Quelles sont les fonctionnalités de sécurité de votre OS ?",
+			"Comment WINUX protège-t-il contre les virus et malwares ?",
+			"WINUX utilise-t-il le sandboxing (bac à sable) ?",
+			"Le système de fichiers est-il sécurisé sur WINUX ?",
+			"Y a-t-il un antivirus intégré à WINUX ?"
+		],
+		"possible_answers": [
+			"WINUX bénéficie de la sécurité inhérente à sa base Chromium : il utilise le sandboxing (bac à sable) pour isoler chaque application et chaque onglet de navigation, empêchant les menaces d'affecter le reste du système.",
+			"Le système est conçu avec un principe de 'vérification au démarrage' qui s'assure qu'aucun fichier malveillant n'a modifié le système d'exploitation de base. Si une corruption est détectée, le système peut se restaurer.",
+			"Étant principalement orienté cloud, l'installation d'applications traditionnelles est limitée, ce qui réduit considérablement la surface d'attaque pour les virus classiques de PC.",
+			"Toutes les mises à jour de sécurité sont automatiques et gérées en arrière-plan, garantissant que vous utilisez toujours la version la plus sécurisée de l'OS.",
+			"Il n'y a pas d'antivirus traditionnel nécessaire, car la conception du système empêche les modifications non autorisées par les applications tierces."
+		]
+	},
+	{
+		"user_questions": [
+			"Comment mettre à jour votre OS ?",
+			"Les mises à jour de WINUX sont-elles automatiques ?",
+			"À quelle fréquence recevez-vous des mises à jour ?",
+			"Dois-je redémarrer après une mise à jour de WINUX ?",
+			"Comment savoir si j'ai la dernière version ?"
+		],
+		"possible_answers": [
+			"Les mises à jour de WINUX sont entièrement automatiques et transparentes. Le système télécharge la nouvelle version en arrière-plan sans interrompre votre travail.",
+			"Vous n'aurez pas besoin d'une installation manuelle. Lorsque la mise à jour est prête, une simple notification vous invite à redémarrer (souvent nécessaire pour basculer vers la nouvelle partition système).",
+			"Grâce à sa base Chromium, les mises à jour de sécurité et les améliorations sont déployées régulièrement, souvent toutes les quelques semaines, assurant une protection constante.",
+			"WINUX utilise un mécanisme de double partition A/B pour les mises à jour : la mise à jour s'installe sur la partition inactive, puis le système bascule lors du redémarrage. C'est rapide et sûr.",
+			"Vous utilisez presque toujours la dernière version sans effort. Le seul moment où vous interagissez est lors du redémarrage rapide pour finaliser le changement de version."
+		]
+	},
+	{
+		"user_questions": [
+			"Quelles applications sont compatibles avec votre OS ?",
+			"Puis-je utiliser Microsoft Office ou Photoshop sur WINUX ?",
+			"Existe-t-il un magasin d'applications pour WINUX ?",
+			"Comment installer des applications sur ce système ?",
+			"Quelles sont les alternatives aux logiciels classiques sur WINUX ?"
+		],
+		"possible_answers": [
+			"La force de WINUX réside dans les Progressive Web Apps (PWA) et les extensions du navigateur. Toutes les applications basées sur le Web, comme Google Docs, Sheets, ou les outils de productivité en ligne, fonctionnent parfaitement.",
+			"Pour des logiciels comme Office ou Photoshop, vous utiliserez les alternatives en ligne : Microsoft 365 Online, Google Workspace, ou des éditeurs d'images basés sur le Web. Les logiciels de bureau lourds ne sont pas supportés nativement.",
+			"Oui, vous pouvez installer des applications web directement depuis le navigateur. Les applications sont principalement accessibles via le Chrome Web Store pour les extensions et les services Web.",
+			"Certaines versions de WINUX peuvent supporter les applications Android (via un conteneur) ou les applications Linux (via une machine virtuelle légère, comme Crostini), mais l'accent est mis sur le Web.",
+			"L'installation se fait en général en visitant le site web de l'application et en cliquant sur l'icône 'Installer' dans la barre d'adresse du navigateur, la transformant en une application autonome."
+		]
+	},
+	{
+		"user_questions": [
+			"Puis-je personnaliser l’apparence et les paramètres de votre OS ?",
+			"Est-ce que WINUX permet de changer le thème ou l'arrière-plan ?",
+			"Peut-on modifier le bureau ou le lanceur d'applications ?",
+			"Quels sont les niveaux de personnalisation possibles sur WINUX ?",
+			"Puis-je installer des thèmes ou des packs d'icônes ?"
+		],
+		"possible_answers": [
+			"WINUX privilégie la simplicité et la cohérence, de sorte que les options de personnalisation sont plus limitées que sur un Linux traditionnel. Vous pouvez facilement changer l'arrière-plan et certains thèmes de couleur de base.",
+			"La personnalisation se concentre principalement sur les éléments du navigateur et du bureau (position de la barre des tâches, raccourcis, etc.). La structure de base de l'interface utilisateur (UI) reste fixe.",
+			"Vous pouvez personnaliser les extensions et les thèmes dans le navigateur Chromium lui-même, ce qui a un impact sur votre expérience globale.",
+			"Contrairement à Linux où vous pouvez remplacer entièrement l'environnement de bureau, WINUX n'autorise que des ajustements superficiels pour maintenir la stabilité et la sécurité du système.",
+			"La modification du lanceur et des icônes du système est restreinte. L'objectif est de fournir une expérience utilisateur simple et standardisée pour tous."
+		]
+	},
+	{
+		"user_questions": [
+			"Votre OS est-il rapide et léger ?",
+			"WINUX est-il plus rapide que Windows 10/11 ?",
+			"Quel est le temps de démarrage typique de WINUX ?",
+			"WINUX consomme-t-il beaucoup de ressources système ?",
+			"Est-ce que WINUX améliore la performance des vieux PC ?"
+		],
+		"possible_answers": [
+			"Oui, WINUX est conçu pour être extrêmement rapide et léger. Son architecture basée sur Chromium lui permet de démarrer en quelques secondes seulement, même sur du matériel modeste.",
+			"Il est souvent beaucoup plus rapide que Windows 10 ou 11 car il n'exécute pas autant de services en arrière-plan. Il se concentre uniquement sur ce dont vous avez besoin : le navigateur et les applications web.",
+			"Le temps de démarrage est généralement de moins de 10 secondes sur un SSD moderne, et reste très rapide sur un disque dur classique.",
+			"WINUX consomme très peu de ressources en veille ou au repos. La consommation de mémoire vive (RAM) dépendra surtout du nombre d'onglets de navigateur ouverts.",
+			"Absolument. WINUX est une excellente solution pour redonner une seconde jeunesse à d'anciens ordinateurs portables qui peinent sous les OS plus lourds."
+		]
+	},
+	{
+		"user_questions": [
+			"Comment obtenir de l’aide ou rejoindre la communauté de votre OS ?",
+			"Où trouver des tutoriels ou des guides pour WINUX ?",
+			"Quel type de support technique proposez-vous pour WINUX ?",
+			"Existe-t-il un forum ou un Discord pour les utilisateurs de WINUX ?",
+			"Comment puis-je signaler un bug dans WINUX ?"
+		],
+		"possible_answers": [
+			"Vous pouvez obtenir de l'aide via notre site web officiel qui contient une section FAQ complète et des guides de dépannage pour les problèmes courants.",
+			"Notre communauté est très active ! Vous pouvez rejoindre notre Forum d'utilisateurs dédié ou notre serveur Discord pour échanger des astuces, poser des questions et partager vos expériences.",
+			"Pour le support technique avancé, nous proposons une assistance par e-mail. Pour les bugs, il existe une plateforme de suivi des problèmes (bug tracker) où vous pouvez signaler et suivre l'état de la correction.",
+			"Étant un système open-source dans sa philosophie, la communauté joue un rôle essentiel. C'est le meilleur endroit pour trouver des astuces de personnalisation et des solutions non officielles.",
+			"Nous encourageons les utilisateurs à contribuer en signalant les bugs et en proposant des améliorations via le forum ou notre dépôt de code source."
+		]
+	},
+	{
+		"user_questions": [
+			"Comment mettre à jour votre OS ?",
+			"Les mises à jour de WINUX sont-elles automatiques ?",
+			"À quelle fréquence recevez-vous des mises à jour système ?",
+			"Dois-je redémarrer après une mise à jour ?",
+			"Comment savoir si j'ai la dernière version du système ?"
+		],
+		"possible_answers": [
+			"Les mises à jour de WINUX sont entièrement automatiques et transparentes. Le système télécharge et installe la nouvelle version en arrière-plan sans interrompre vos activités.",
+			"Vous n'avez aucune action manuelle à effectuer. Lorsque la mise à jour est prête, une simple notification apparaît pour vous demander de redémarrer afin de finaliser le processus.",
+			"Les améliorations de sécurité et les nouvelles fonctionnalités sont déployées régulièrement pour assurer que vous ayez toujours la version la plus stable et la plus récente.",
+			"WINUX utilise un mécanisme de mise à jour A/B : la nouvelle version s'installe sur une partition inactive, puis le système bascule vers elle lors d'un redémarrage rapide. C'est sûr et minimise les risques de panne.",
+			"Étant donné que le processus est géré de manière centralisée et automatique, vous utilisez presque toujours la version la plus à jour. La seule intervention nécessaire est le redémarrage occasionnel."
+		]
+	},
+	{
+		"user_questions": [
+			"Quelles applications sont compatibles avec votre OS ?",
+			"Puis-je installer mes logiciels préférés sur WINUX ?",
+			"Existe-t-il un magasin d'applications pour WINUX ?",
+			"Comment installe-t-on de nouvelles applications sur ce système ?",
+			"Quelles sont les alternatives aux logiciels de bureau traditionnels ?"
+		],
+		"possible_answers": [
+			"La principale méthode pour utiliser des applications sur WINUX est via les Progressive Web Apps (PWA) et les services Web. Tout ce qui fonctionne dans un navigateur moderne est entièrement compatible.",
+			"WINUX est optimisé pour les applications basées sur le cloud et les outils de productivité en ligne. Vous utiliserez les versions web de la plupart des suites logicielles.",
+			"L'installation de nouvelles applications se fait principalement en visitant le site web du service et en cliquant sur l'option 'Installer' directement dans le navigateur, créant ainsi une application autonome sur le bureau.",
+			"Il existe un Web Store dédié où vous pouvez trouver des extensions, des thèmes et des raccourcis vers des milliers de services et d'outils en ligne compatibles.",
+			"Les logiciels de bureau traditionnels lourds ne sont pas supportés nativement. L'accent est mis sur des solutions plus légères, sécurisées et accessibles via le navigateur."
+		]
+	},
+	{
+		"user_questions": [
+			"Votre OS est-il rapide et léger ?",
+			"Quelle est la vitesse de démarrage de WINUX ?",
+			"WINUX consomme-t-il beaucoup de ressources système ?",
+			"Est-ce que cet OS est adapté aux ordinateurs anciens ?",
+			"Comment se compare la performance de WINUX à d'autres systèmes ?"
+		],
+		"possible_answers": [
+			"Oui, WINUX est conçu pour être extrêmement rapide et léger. Son architecture est minimaliste et optimisée pour un démarrage et une exécution ultra-rapides.",
+			"Le temps de démarrage est généralement très court, souvent de moins de 10 secondes sur la plupart des machines, vous permettant d'accéder rapidement à vos applications web.",
+			"WINUX consomme très peu de ressources en mémoire vive (RAM) et en puissance CPU en fonctionnement de base, car il n'exécute pas de nombreux services lourds en arrière-plan.",
+			"Absolument. WINUX est une excellente solution pour améliorer la performance des ordinateurs plus anciens ou peu puissants qui peinent avec des systèmes d'exploitation plus gourmands.",
+			"L'efficacité du système dépend principalement de votre navigateur et du nombre d'onglets ouverts, mais le système d'exploitation de base lui-même reste très réactif."
+		]
 	}
 ]

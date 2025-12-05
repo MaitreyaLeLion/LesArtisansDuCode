@@ -128,11 +128,13 @@
 		<script>
 			const chatMessages = document.getElementById("chatMessages");
 			const userInput = document.getElementById("userInput");
+			const DOMAIN_NAME = "http://129.151.255.248:3001/";
 
-			function sendMessage() {
+			async function sendMessage() {
 				const text = userInput.value.trim();
 				if (!text) return;
 
+				// Afficher le message de l'utilisateur
 				const userMsg = document.createElement("div");
 				userMsg.className = "message user-message";
 				userMsg.textContent = text;
@@ -140,13 +142,33 @@
 				chatMessages.scrollTop = chatMessages.scrollHeight;
 				userInput.value = "";
 
-				setTimeout(() => {
+				try {
+					// Envoyer le message au backend
+					const response = await fetch(DOMAIN_NAME + "api/chatbot", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ message: text }),
+					});
+
+					if (!response.ok) {
+						throw new Error(`Erreur ${response.status}`);
+					}
+
+					const data = await response.json();
+
+					// Afficher la réponse du bot
 					const botMsg = document.createElement("div");
 					botMsg.className = "message bot-message";
-					botMsg.textContent = `Réponse du bot à : "${text}"`;
+					botMsg.textContent = data.response || "Aucune réponse trouvée.";
 					chatMessages.appendChild(botMsg);
 					chatMessages.scrollTop = chatMessages.scrollHeight;
-				}, 700);
+				} catch (err) {
+					const botMsg = document.createElement("div");
+					botMsg.className = "message bot-message";
+					botMsg.textContent = `Erreur : ${err.message}`;
+					chatMessages.appendChild(botMsg);
+					chatMessages.scrollTop = chatMessages.scrollHeight;
+				}
 			}
 
 			userInput.addEventListener("keypress", (e) => {
